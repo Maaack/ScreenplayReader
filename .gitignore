@@ -1,0 +1,17 @@
+# gitignore files
+
+# Editor
+/.idea
+
+# Docker
+Dockerfile~
+
+screenplayreader/__pycache__/
+screenplayreader/settings.py
+
+.gitignore
+importer/__pycache__/
+importer/migrations/__pycache__/
+importer/models/__pycache__/
+screenplayreader/mixins/__pycache__/
+db.sqlite3
