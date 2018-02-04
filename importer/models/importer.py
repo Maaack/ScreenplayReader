@@ -56,8 +56,8 @@ class FormatLink(BaseModel):
         ordering = ["-created"]
         default_related_name = 'format_links'
 
-    file_format = models.ForeignKey('FileFormat')
-    element_format = models.ForeignKey('ElementFormat')
+    file_format = models.ForeignKey('FileFormat', models.CASCADE)
+    element_format = models.ForeignKey('ElementFormat', models.CASCADE)
 
     def __str__(self):
         return str(self.file_format)[:10] + " : " + str(self.element_format)[:10]
