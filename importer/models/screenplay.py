@@ -50,6 +50,7 @@ class ContentElement(BaseModel, RawText):
 
     content = models.ForeignKey('Content')
     order = models.IntegerField(_("Order"), default=0, db_index=True)
+    type = models.CharField(_("Type"), max_length=32)
 
     def save(self, *args, **kwargs):
         from django.db.models import F
@@ -61,83 +62,3 @@ class ContentElement(BaseModel, RawText):
             if conflicting_time:
                 self.timeline.time_links.filter(order__gte=self.order).update(order=F('order') + 1)
         return super(ContentElement, self).save(*args, **kwargs)
-
-
-class SceneHeading(ContentElement):
-    class Meta:
-        verbose_name = _("Scene Heading")
-        verbose_name_plural = _("Scene Headings")
-        ordering = ["-created"]
-        default_related_name = 'scene_headings'
-
-
-class Transition(ContentElement):
-    class Meta:
-        verbose_name = _("Transition")
-        verbose_name_plural = _("Transitions")
-        ordering = ["-created"]
-        default_related_name = 'transitions'
-
-
-class Dialogue(ContentElement):
-    class Meta:
-        verbose_name = _("Dialogue")
-        verbose_name_plural = _("Dialogues")
-        ordering = ["-created"]
-        default_related_name = 'dialogues'
-
-
-class Action(ContentElement):
-    class Meta:
-        verbose_name = _("Action")
-        verbose_name_plural = _("Actions")
-        ordering = ["-created"]
-        default_related_name = 'actions'
-
-
-class Parenthetical(ContentElement):
-    class Meta:
-        verbose_name = _("Parenthetical")
-        verbose_name_plural = _("Parentheticals")
-        ordering = ["-created"]
-        default_related_name = 'parentheticals'
-
-
-class Character(ContentElement):
-    class Meta:
-        verbose_name = _("Character")
-        verbose_name_plural = _("Characters")
-        ordering = ["-created"]
-        default_related_name = 'characters'
-
-
-class Intercut(ContentElement):
-    class Meta:
-        verbose_name = _("Intercut")
-        verbose_name_plural = _("Intercuts")
-        ordering = ["-created"]
-        default_related_name = 'intercuts'
-
-
-class MoreText(ContentElement):
-    class Meta:
-        verbose_name = _("More Text")
-        verbose_name_plural = _("More Texts")
-        ordering = ["-created"]
-        default_related_name = 'more_texts'
-
-
-class ContinuedText(ContentElement):
-    class Meta:
-        verbose_name = _("Continued Text")
-        verbose_name_plural = _("Continued Texts")
-        ordering = ["-created"]
-        default_related_name = 'continued_texts'
-
-
-class Unclassified(ContentElement):
-    class Meta:
-        verbose_name = _("Unclassified")
-        verbose_name_plural = _("Unclassifieds")
-        ordering = ["-created"]
-        default_related_name = 'unclassifieds'
