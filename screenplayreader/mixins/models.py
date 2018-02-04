@@ -22,32 +22,18 @@ class TimeStamped(models.Model):
         super(TimeStamped, self).save(*args, **kwargs)
 
 
-class SoftOwned(models.Model):
-    class Meta:
-        abstract = True
-
-    user = models.ForeignKey(user_model_name, verbose_name=_("Author"), related_name="+")
-
-
-class SoftOwnable(models.Model):
-    class Meta:
-        abstract = True
-
-    user = models.ForeignKey(user_model_name, verbose_name=_("Author"), related_name="+", blank=True, null=True)
-
-
 class Owned(models.Model):
     class Meta:
         abstract = True
 
-    user = models.ForeignKey(user_model_name, verbose_name=_("Author"), related_name="%(class)ss")
+    user = models.ForeignKey(user_model_name, models.CASCADE, verbose_name=_("Author"), related_name="%(class)ss")
 
 
 class Ownable(models.Model):
     class Meta:
         abstract = True
 
-    user = models.ForeignKey(user_model_name, verbose_name=_("Author"), related_name="%(class)ss", blank=True, null=True)
+    user = models.ForeignKey(user_model_name, models.SET_NULL, verbose_name=_("Author"), related_name="%(class)ss", blank=True, null=True)
 
 
 class RawTitle(models.Model):
@@ -69,7 +55,7 @@ class RawText(models.Model):
     class Meta:
         abstract = True
 
-    raw_text = models.TextField(_("Raw Text"))
+    raw_text = models.TextField(_("Raw Text"), blank=True, null=True, default='')
     text = models.TextField(_("Text"), blank=True, null=True, default='')
     snippet = models.CharField(_("Snippet"), max_length=25, blank=True, null=True, default='')
 
