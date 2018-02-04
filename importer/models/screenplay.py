@@ -10,8 +10,8 @@ class Screenplay(BaseModel):
         ordering = ["-created"]
         default_related_name = 'screenplays'
 
-    title_page = models.OneToOneField('TitlePage', null=True)
-    content = models.OneToOneField('Content')
+    title_page = models.OneToOneField('TitlePage', models.SET_NULL, null=True)
+    content = models.OneToOneField('Content', models.CASCADE)
 
     def __str__(self):
         try:
@@ -48,7 +48,7 @@ class ContentElement(BaseModel, RawText):
         ordering = ["-created"]
         default_related_name = 'content_elements'
 
-    content = models.ForeignKey('Content')
+    content = models.ForeignKey('Content', models.CASCADE)
     order = models.IntegerField(_("Order"), default=0, db_index=True)
 
     def save(self, *args, **kwargs):
