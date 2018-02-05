@@ -5,6 +5,8 @@ from rest_framework import routers
 
 router = routers.DefaultRouter()
 router.register(r'imported-content', views.ImportedContentViewSet)
+router.register(r'parse-operations', views.ParseOperationViewSet)
+router.register(r'text-matches', views.TextMatchViewSet)
 
 
 urlpatterns = [

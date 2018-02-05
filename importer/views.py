@@ -11,3 +11,13 @@ from screenplayreader.mixins.views import BaseViewSet
 class ImportedContentViewSet(BaseViewSet):
     queryset = ImportedContent.objects.all()
     serializer_class = ImportedContentSerializer
+
+
+class ParseOperationViewSet(BaseViewSet):
+    queryset = ParseOperation.objects.all()
+    serializer_class = ParseOperationSerializer
+
+
+class TextMatchViewSet(BaseViewSet):
+    queryset = TextMatch.objects.all()
+    serializer_class = TextMatchSerializer

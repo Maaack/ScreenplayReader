@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from . import ImportedContent
+from . import ImportedContent, ParseOperation, TextMatch
+
 
 class BaseModelSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -25,4 +26,16 @@ class ImportedContentSerializer(BaseModelSerializer):
     class Meta:
         model = ImportedContent
         fields = ('id', 'created', 'updated', 'user', 'raw_text', 'text')
+
+
+class ParseOperationSerializer(BaseModelSerializer):
+    class Meta:
+        model = ParseOperation
+        fields = ('id', 'created', 'updated', 'user', 'imported_content')
+
+
+class TextMatchSerializer(BaseModelSerializer):
+    class Meta:
+        model = TextMatch
+        fields = ('id', 'created', 'updated', 'user', 'parse_operation', 'index', 'type', 'text')
 
