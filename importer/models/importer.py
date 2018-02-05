@@ -26,6 +26,27 @@ class ImportedContent(BaseModel, RawText):
         default_related_name = 'imported_contents'
 
 
+class ParseOperation(BaseModel):
+    class Meta:
+        verbose_name = _('Parse Op')
+        verbose_name_plural = _('Parse Ops')
+        ordering = ["-created"]
+        default_related_name = 'parse_operations'
+
+    imported_content = models.ForeignKey('ImportedContent', models.CASCADE)
+
+    def save(self, *args, **kwargs):
+        self.run_operation()
+        return super(ParseOperation, self).save(*args, **kwargs)
+
+    def run_operation(self):
+        if self.imported_content:
+            self.blank_operation()
+
+    def blank_operation(self):
+        return None
+
+
 class TextFormat(BaseModel):
     class Meta:
         verbose_name = _('Format')
