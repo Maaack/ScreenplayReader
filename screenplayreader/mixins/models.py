@@ -63,7 +63,7 @@ class RawText(models.Model):
         return self.snippet
 
     def save(self, *args, **kwargs):
-        self.text = self.raw_text.strip().capitalize()
+        self.text = self.raw_text.strip()
         self.snippet = self.text[:25]
         return super(RawText, self).save(*args, **kwargs)
 
