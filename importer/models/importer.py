@@ -18,23 +18,25 @@ class Import(BaseModel):
     file = models.FileField(_("Uploaded File"), upload_to="imports/%Y/%m/%d/")
 
 
-class FileFormat(BaseModel):
+class ImportedContent(BaseModel, RawText):
+    class Meta:
+        verbose_name = _('Imported Content')
+        verbose_name_plural = _('Imported Contents')
+        ordering = ["-created"]
+        default_related_name = 'imported_contents'
+
+
+class TextFormat(BaseModel):
     class Meta:
         verbose_name = _('Format')
         verbose_name_plural = _('Formats')
         ordering = ["-created"]
         default_related_name = 'formats'
 
-    readable_name = models.CharField(_("Readable Name"), max_length=50)
-    machine_name = models.CharField(_("Machine Name"), max_length=25)
-    file_extension = models.CharField(_("File Extension"), default=".txt", max_length=10)
-    description = models.TextField(_("Description"), blank=True)
+    name = models.CharField(_("Name"), max_length=50, default='Format')
+    description = models.TextField(_("Description"), blank=True, null=True)
 
-    element_formats = models.ManyToManyField(
-        'ElementFormat',
-        through='FormatLink',
-        through_fields=('file_format', 'element_format'),
-    )
+    element_formats = models.ManyToManyField('ElementFormat')
 
     def __str__(self):
         if self.readable_name:
@@ -57,17 +59,3 @@ class ElementFormat(BaseModel):
 
     def __str__(self):
         return self.name
-
-
-class FormatLink(BaseModel):
-    class Meta:
-        verbose_name = _("Format Link")
-        verbose_name_plural = _("Format Links")
-        ordering = ["-created"]
-        default_related_name = 'format_links'
-
-    file_format = models.ForeignKey('FileFormat', models.CASCADE)
-    element_format = models.ForeignKey('ElementFormat', models.CASCADE)
-
-    def __str__(self):
-        return str(self.file_format)[:10] + " : " + str(self.element_format)[:10]
