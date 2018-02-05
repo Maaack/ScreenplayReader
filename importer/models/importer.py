@@ -60,10 +60,8 @@ class TextFormat(BaseModel):
     element_formats = models.ManyToManyField('ElementFormat')
 
     def __str__(self):
-        if self.readable_name:
-            return str(self.readable_name[:25])
-        elif self.machine_name:
-            return str(self.machine_name[:25])
+        if self.name:
+            return str(self.name[:25])
         else:
             return self.description[:25]
 
