@@ -21,3 +21,8 @@ class ParseOperationViewSet(BaseViewSet):
 class TextMatchViewSet(BaseViewSet):
     queryset = TextMatch.objects.all()
     serializer_class = TextMatchSerializer
+
+
+class GroupMatchViewSet(BaseViewSet):
+    queryset = GroupMatch.objects.all()
+    serializer_class = GroupMatchSerializer
