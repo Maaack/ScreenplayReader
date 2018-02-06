@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from . import ImportedContent, ParseOperation, TextMatch, GroupMatch
+from . import ImportedContent, TextMatch, GroupMatch, TextBlock, ParseOperation
 
 
 class BaseModelSerializer(serializers.HyperlinkedModelSerializer):
@@ -34,14 +34,20 @@ class ParseOperationSerializer(BaseModelSerializer):
         fields = ('id', 'created', 'updated', 'user', 'imported_content')
 
 
+class TextBlockSerializer(BaseModelSerializer):
+    class Meta:
+        model = TextBlock
+        fields = ('id', 'created', 'updated', 'user', 'parse_operation', 'index', 'text')
+
+
 class TextMatchSerializer(BaseModelSerializer):
     class Meta:
         model = TextMatch
-        fields = ('id', 'created', 'updated', 'user', 'parse_operation', 'index', 'type', 'text')
+        fields = ('id', 'created', 'updated', 'user', 'parse_operation', 'text_block', 'match_type', 'text')
 
 
 class GroupMatchSerializer(BaseModelSerializer):
     class Meta:
         model = GroupMatch
-        fields = ('id', 'created', 'updated', 'user', 'parse_operation', 'text_match', 'type', 'text')
+        fields = ('id', 'created', 'updated', 'user', 'parse_operation', 'text_match', 'group_type', 'text')
 

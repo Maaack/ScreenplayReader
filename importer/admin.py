@@ -1,7 +1,9 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import ImportedContent, ParseOperation, GroupMatch, TextMatch
+from .models import ImportedContent, GroupMatch
+from importer.models.matches import TextMatch, GroupMatch
+from importer.models.operations import ParseOperation
 
 admin.site.register(ImportedContent)
 admin.site.register(ParseOperation)

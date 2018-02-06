@@ -1,7 +1,6 @@
 from django.utils.translation import ugettext_lazy as _
 
 from screenplayreader.mixins.models import *
-from importer.services.parsers import SettingRegexParser, CharacterRegexParser
 
 
 class BaseModel(TimeStamped, Ownable):
@@ -25,89 +24,6 @@ class ImportedContent(BaseModel, RawText):
         verbose_name_plural = _('Imported Contents')
         ordering = ["-created"]
         default_related_name = 'imported_contents'
-
-
-class ParseOperation(BaseModel):
-    class Meta:
-        verbose_name = _('Parse Op')
-        verbose_name_plural = _('Parse Ops')
-        ordering = ["-created"]
-        default_related_name = 'parse_operations'
-
-    imported_content = models.ForeignKey('ImportedContent', models.CASCADE)
-
-    def save(self, *args, **kwargs):
-        result_object = super(ParseOperation, self).save(*args, **kwargs)
-        self.run_operation()
-        return result_object
-
-    def run_operation(self):
-        if self.imported_content:
-            self.parse_settings()
-            self.parse_characters()
-
-    def get_split_text(self):
-        if self.imported_content.raw_text:
-            return self.imported_content.raw_text.splitlines()
-        return None
-
-    def run_parser_on_text(self, match_type, parser_class):
-        split_text = self.get_split_text()
-        if split_text:
-            parser = parser_class()
-            for index, line in enumerate(split_text):
-                match = parser.search(line)
-                if match:
-                    text_match = TextMatch.objects.create(
-                        parse_operation=self,
-                        index=index,
-                        type=match_type,
-                        text=line
-                    )
-                    text_match.add_group_matches(match)
-                    text_match.save()
-
-    def parse_settings(self):
-        self.run_parser_on_text('setting', SettingRegexParser)
-
-    def parse_characters(self):
-        self.run_parser_on_text('character', CharacterRegexParser)
-
-
-class TextMatch(BaseModel):
-    class Meta:
-        verbose_name = _('Text Match')
-        verbose_name_plural = _('Text Matches')
-        ordering = ["-created"]
-        default_related_name = 'text_matches'
-
-    parse_operation = models.ForeignKey('ParseOperation', models.CASCADE)
-    index = models.IntegerField(_('Index'), db_index=True)
-    text_type = models.CharField(_('Type'), max_length=25, db_index=True)
-    text = models.TextField(_('Text'))
-
-    def add_group_matches(self, group_matches):
-        for group_match in group_matches:
-            if group_match[1]:
-                GroupMatch.objects.create(
-                            parse_operation=self.parse_operation,
-                            text_match=self,
-                            type=group_match[0],
-                            text=group_match[1]
-                )
-
-
-class GroupMatch(BaseModel):
-    class Meta:
-        verbose_name = _('Group Match')
-        verbose_name_plural = _('Group Matches')
-        ordering = ["-created"]
-        default_related_name = 'group_matches'
-
-    parse_operation = models.ForeignKey('ParseOperation', models.CASCADE)
-    text_match = models.ForeignKey('TextMatch', models.CASCADE)
-    group_type = models.CharField(_('Type'), max_length=25, db_index=True)
-    text = models.TextField(_('Text'))
 
 
 class TextFormat(BaseModel):
