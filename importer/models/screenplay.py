@@ -35,7 +35,7 @@ class CountedTitle(BaseModel, RawTitle):
         abstract = True
     interpret_operation = models.ForeignKey('InterpretOperation', models.CASCADE)
     screenplay = models.ForeignKey('Screenplay', models.CASCADE)
-    occurrences = models.IntegerField('Occurrences', db_index=True)
+    occurrences = models.PositiveIntegerField('Occurrences', db_index=True)
 
     def __str__(self):
         return self.title
