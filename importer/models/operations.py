@@ -107,7 +107,23 @@ class InterpretOperation(BaseModel):
         return TextMatch.objects.filter(parse_operation=self.parse_operation)
 
     def interpret_title_page(self):
-        pass
+        first_setting = self.get_text_match_set().filter(match_type=ParseOperation.PARSER_TYPE_SETTING).order_by('text_block__index').first()
+        first_setting_index = min(first_setting.text_block.index, self.TITLE_PAGE_MAX_BLOCKS)
+        first_text_blocks = self.get_text_blocks_set().order_by('index')[0:first_setting_index]
+        title = None
+        for text_block in first_text_blocks:
+            text = text_block.text
+            if text != '' and text is not None:
+                title = text
+                break
+
+        text_query_set = first_text_blocks.values('text')
+        text = "\n".join([dict_a['text'] for dict_a in text_query_set])
+        TitlePage.objects.create(
+            interpret_operation=self,
+            raw_title=title,
+            raw_text=text,
+        )
 
     def interpret_locations(self):
         pass
