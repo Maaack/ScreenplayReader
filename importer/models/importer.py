@@ -1,7 +1,7 @@
 from django.utils.translation import ugettext_lazy as _
 
 from screenplayreader.mixins.models import *
-from importer.services.parsers import SettingRegexParser
+from importer.services.parsers import SettingRegexParser, CharacterRegexParser
 
 
 class BaseModel(TimeStamped, Ownable):
@@ -44,27 +44,34 @@ class ParseOperation(BaseModel):
     def run_operation(self):
         if self.imported_content:
             self.parse_settings()
+            self.parse_characters()
 
     def get_split_text(self):
         if self.imported_content.raw_text:
             return self.imported_content.raw_text.splitlines()
         return None
 
-    def parse_settings(self):
+    def run_parser_on_text(self, match_type, parser_class):
         split_text = self.get_split_text()
         if split_text:
-            parser = SettingRegexParser()
+            parser = parser_class()
             for index, line in enumerate(split_text):
                 match = parser.search(line)
                 if match:
                     text_match = TextMatch.objects.create(
                         parse_operation=self,
                         index=index,
-                        type='setting',
+                        type=match_type,
                         text=line
                     )
                     text_match.add_group_matches(match)
                     text_match.save()
+
+    def parse_settings(self):
+        self.run_parser_on_text('setting', SettingRegexParser)
+
+    def parse_characters(self):
+        self.run_parser_on_text('character', CharacterRegexParser)
 
 
 class TextMatch(BaseModel):
