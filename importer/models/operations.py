@@ -1,6 +1,7 @@
 from django.utils.translation import ugettext_lazy as _
+from django.db.models import Count
 
-from importer.models import BaseModel, TextBlock, TextMatch, Screenplay, TitlePage
+from importer.models import BaseModel, TextBlock, TextMatch, Screenplay, TitlePage, Location, Character
 from importer.services.parsers import SettingRegexParser, CharacterRegexParser
 from screenplayreader.mixins.models import *
 
@@ -106,9 +107,15 @@ class InterpretOperation(BaseModel):
     def get_text_match_set(self):
         return TextMatch.objects.filter(parse_operation=self.parse_operation)
 
+    def get_text_match_setting_set(self):
+        return self.get_text_match_set().filter(match_type=ParseOperation.PARSER_TYPE_SETTING)
+
+    def get_text_match_character_set(self):
+        return self.get_text_match_set().filter(match_type=ParseOperation.PARSER_TYPE_CHARACTER)
+
     def interpret_title_page(self):
         screenplay = self.get_screenplay()
-        first_setting = self.get_text_match_set().filter(match_type=ParseOperation.PARSER_TYPE_SETTING).order_by('text_block__index').first()
+        first_setting = self.get_text_match_setting_set().order_by('text_block__index').first()
         first_setting_index = min(first_setting.text_block.index, self.TITLE_PAGE_MAX_BLOCKS)
         first_text_blocks = self.get_text_blocks_set().order_by('index')[0:first_setting_index]
         title = None
@@ -128,7 +135,17 @@ class InterpretOperation(BaseModel):
         )
 
     def interpret_locations(self):
-        pass
+        screenplay = self.get_screenplay()
+        settings_match = self.get_text_match_setting_set().filter(group_matches__group_type='location'). \
+            values('group_matches__text').order_by('group_matches__text'). \
+            annotate(occurrences=Count('group_matches__text')).order_by('-occurrences')
+        for setting_match in settings_match:
+            Location.objects.create(
+                interpret_operation=self,
+                screenplay=screenplay,
+                raw_text=setting_match['group_matches__text'],
+                occurrences=setting_match['occurrences']
+            )
 
     def interpret_characters(self):
         pass
