@@ -1,10 +1,7 @@
-from django.shortcuts import render
-
 # Create your views here.
 
-from .models.serializers import *
-
 from screenplayreader.mixins.views import BaseViewSet
+from .models.serializers import *
 
 
 # Create your views here.
@@ -16,6 +13,11 @@ class ImportedContentViewSet(BaseViewSet):
 class ParseOperationViewSet(BaseViewSet):
     queryset = ParseOperation.objects.all()
     serializer_class = ParseOperationSerializer
+
+
+class TextBlockViewSet(BaseViewSet):
+    queryset = TextBlock.objects.all()
+    serializer_class = TextBlockSerializer
 
 
 class TextMatchViewSet(BaseViewSet):
