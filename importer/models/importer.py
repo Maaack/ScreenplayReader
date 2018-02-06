@@ -83,7 +83,7 @@ class TextMatch(BaseModel):
 
     parse_operation = models.ForeignKey('ParseOperation', models.CASCADE)
     index = models.IntegerField(_('Index'), db_index=True)
-    type = models.CharField(_('Type'), max_length=25, db_index=True)
+    text_type = models.CharField(_('Type'), max_length=25, db_index=True)
     text = models.TextField(_('Text'))
 
     def add_group_matches(self, group_matches):
@@ -106,7 +106,7 @@ class GroupMatch(BaseModel):
 
     parse_operation = models.ForeignKey('ParseOperation', models.CASCADE)
     text_match = models.ForeignKey('TextMatch', models.CASCADE)
-    type = models.CharField('Type', max_length=25)
+    group_type = models.CharField(_('Type'), max_length=25, db_index=True)
     text = models.TextField(_('Text'))
 
 
