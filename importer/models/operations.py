@@ -89,6 +89,15 @@ class InterpretOperation(BaseModel):
             self.interpret_locations()
             self.interpret_characters()
 
+    def get_screenplay(self):
+        if Screenplay.objects.filter(interpret_operation=self).count() == 0:
+            content = self.parse_operation.imported_content.text
+            Screenplay.objects.create(
+                interpret_operation=self,
+                raw_text=content,
+            )
+        return Screenplay.objects.filter(interpret_operation=self).first()
+
     def get_text_match_set(self):
         return TextMatch.objects.filter(parse_operation=self.parse_operation)
 
