@@ -12,6 +12,8 @@ router.register(r'text-matches', views.TextMatchViewSet)
 router.register(r'group-matches', views.GroupMatchViewSet)
 router.register(r'screenplays', views.ScreenplayViewSet)
 router.register(r'title-pages', views.TitlePageViewSet)
+router.register(r'locations', views.LocationViewSet)
+router.register(r'characters', views.CharacterViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
