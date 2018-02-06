@@ -22,7 +22,7 @@ class RegexParser(ABC):
 
     def search(self, text: str):
         pattern = self.get_pattern()
-        match = re.search(pattern, text, re.IGNORECASE)
+        match = re.search(pattern, text)
         if match:
             return self.match_to_group(match)
         return None
@@ -35,7 +35,7 @@ class SettingRegexParser(RegexParser):
 
     @staticmethod
     def get_pattern():
-        return r"^(int|ext|ext[\/\\]int|ext[\/\\]int)[\s\.]+([\w\s']*)(-\s?([\w\s']*))?$"
+        return r"^(INT|EXT|EXT[\/\\]INT|INT[\/\\]EXT)[\s\.]+([\w\s']*)(-\s?([\w\s']*))?$"
 
     @staticmethod
     def get_groups():
