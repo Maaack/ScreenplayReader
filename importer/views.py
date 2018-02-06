@@ -43,3 +43,13 @@ class ScreenplayViewSet(BaseViewSet):
 class TitlePageViewSet(BaseViewSet):
     queryset = TitlePage.objects.all()
     serializer_class = TitlePageSerializer
+
+
+class LocationViewSet(BaseViewSet):
+    queryset = Location.objects.all()
+    serializer_class = LocationSerializer
+
+
+class CharacterViewSet(BaseViewSet):
+    queryset = Character.objects.all()
+    serializer_class = CharacterSerializer
