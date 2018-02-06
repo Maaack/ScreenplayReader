@@ -23,6 +23,7 @@ class TitlePage(BaseModel, RawTitle, RawText):
         ordering = ["-created"]
 
     interpret_operation = models.ForeignKey('InterpretOperation', models.CASCADE)
+    screenplay = models.ForeignKey('Screenplay', models.CASCADE)
 
     def __str__(self):
         return self.title

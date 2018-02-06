@@ -107,6 +107,7 @@ class InterpretOperation(BaseModel):
         return TextMatch.objects.filter(parse_operation=self.parse_operation)
 
     def interpret_title_page(self):
+        screenplay = self.get_screenplay()
         first_setting = self.get_text_match_set().filter(match_type=ParseOperation.PARSER_TYPE_SETTING).order_by('text_block__index').first()
         first_setting_index = min(first_setting.text_block.index, self.TITLE_PAGE_MAX_BLOCKS)
         first_text_blocks = self.get_text_blocks_set().order_by('index')[0:first_setting_index]
@@ -121,6 +122,7 @@ class InterpretOperation(BaseModel):
         text = "\n".join([dict_a['text'] for dict_a in text_query_set])
         TitlePage.objects.create(
             interpret_operation=self,
+            screenplay=screenplay,
             raw_title=title,
             raw_text=text,
         )
