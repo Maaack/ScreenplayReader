@@ -45,13 +45,14 @@ class ParseOperation(BaseModel):
         if self.imported_content:
             self.parse_settings()
 
-    def blank_operation(self):
+    def get_split_text(self):
+        if self.imported_content.raw_text:
+            return self.imported_content.raw_text.splitlines()
         return None
 
     def parse_settings(self):
-        if self.imported_content.raw_text:
-            text = self.imported_content.raw_text
-            split_text = text.splitlines()
+        split_text = self.get_split_text()
+        if split_text:
             parser = SettingRegexParser()
             for index, line in enumerate(split_text):
                 match = parser.search(line)
