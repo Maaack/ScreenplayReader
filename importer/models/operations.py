@@ -1,6 +1,6 @@
 from django.utils.translation import ugettext_lazy as _
 
-from importer.models import BaseModel, TextBlock, TextMatch, Screenplay
+from importer.models import BaseModel, TextBlock, TextMatch, Screenplay, TitlePage
 from importer.services.parsers import SettingRegexParser, CharacterRegexParser
 from screenplayreader.mixins.models import *
 
@@ -70,6 +70,8 @@ class ParseOperation(BaseModel):
 
 
 class InterpretOperation(BaseModel):
+    TITLE_PAGE_MAX_BLOCKS = 40
+
     class Meta:
         verbose_name = _('Interpret Op')
         verbose_name_plural = _('Interpret Ops')
@@ -97,6 +99,9 @@ class InterpretOperation(BaseModel):
                 raw_text=content,
             )
         return Screenplay.objects.filter(interpret_operation=self).first()
+
+    def get_text_blocks_set(self):
+        return TextBlock.objects.filter(parse_operation=self.parse_operation)
 
     def get_text_match_set(self):
         return TextMatch.objects.filter(parse_operation=self.parse_operation)
