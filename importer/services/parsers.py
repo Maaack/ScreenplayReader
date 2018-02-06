@@ -15,11 +15,7 @@ class RegexParser(ABC):
 
     @staticmethod
     def validate_result(result):
-        if type(result) is tuple:
-            return result
-        elif type(result) is dict:
-            return result
-        return None
+        return result
 
     @staticmethod
     def clean_text(text):
