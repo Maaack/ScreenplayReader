@@ -1,6 +1,6 @@
 from django.utils.translation import ugettext_lazy as _
 
-from importer.models import BaseModel, TextBlock, TextMatch
+from importer.models import BaseModel, TextBlock, TextMatch, Screenplay
 from importer.services.parsers import SettingRegexParser, CharacterRegexParser
 from screenplayreader.mixins.models import *
 
@@ -41,7 +41,7 @@ class ParseOperation(BaseModel):
                     parse_operation=self,
                     index=index,
                     text=line
-                ).save()
+                )
 
     def parse_text(self, match_type, text_block, parser):
         text = text_block.text
@@ -54,7 +54,6 @@ class ParseOperation(BaseModel):
                 text=text
             )
             text_match.save_group_matches(match)
-            text_match.save()
 
     def parse_text_blocks(self, match_type, parser_class):
         text_blocks = self.get_text_blocks()
