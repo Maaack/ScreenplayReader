@@ -15,6 +15,11 @@ class ParseOperationViewSet(BaseViewSet):
     serializer_class = ParseOperationSerializer
 
 
+class InterpretOperationViewSet(BaseViewSet):
+    queryset = InterpretOperation.objects.all()
+    serializer_class = InterpretOperationSerializer
+
+
 class TextBlockViewSet(BaseViewSet):
     queryset = TextBlock.objects.all()
     serializer_class = TextBlockSerializer
@@ -28,3 +33,13 @@ class TextMatchViewSet(BaseViewSet):
 class GroupMatchViewSet(BaseViewSet):
     queryset = GroupMatch.objects.all()
     serializer_class = GroupMatchSerializer
+
+
+class ScreenplayViewSet(BaseViewSet):
+    queryset = Screenplay.objects.all()
+    serializer_class = ScreenplaySerializer
+
+
+class TitlePageViewSet(BaseViewSet):
+    queryset = TitlePage.objects.all()
+    serializer_class = TitlePageSerializer
