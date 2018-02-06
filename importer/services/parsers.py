@@ -41,14 +41,14 @@ class RegexParser(ABC):
 
 
 class SettingRegexParser(RegexParser):
-    GROUP_POSITION = 'position'
-    GROUP_LOCATION = 'location'
-    GROUP_TIME = 'time'
+    GROUP_POSITION = 1
+    GROUP_LOCATION = 3
+    GROUP_TIME = 5
 
     GROUPS = (
-            (GROUP_POSITION, 1),
-            (GROUP_LOCATION, 3),
-            (GROUP_TIME, 5)
+            ('position', GROUP_POSITION),
+            ('location', GROUP_LOCATION),
+            ('time', GROUP_TIME)
         )
 
     @staticmethod
@@ -61,20 +61,20 @@ class SettingRegexParser(RegexParser):
 
 
 class CharacterRegexParser(RegexParser):
-    GROUP_FULL_TITLE = 'full_title'
-    GROUP_HONORIFIC = 'honorific'
-    GROUP_ROLE = 'role'
-    GROUP_NUMBER = 'number'
-    GROUP_POSITION = 'position'
-    GROUP_CONTINUED = 'continued'
+    GROUP_FULL_TITLE = 1
+    GROUP_HONORIFIC = 2
+    GROUP_ROLE = 3
+    GROUP_NUMBER = 5
+    GROUP_POSITION = 6
+    GROUP_CONTINUED = 7
 
     GROUPS = (
-            (GROUP_FULL_TITLE, 1),
-            (GROUP_HONORIFIC, 2),
-            (GROUP_ROLE, 3),
-            (GROUP_NUMBER, 5),
-            (GROUP_POSITION, 6),
-            (GROUP_CONTINUED, 7)
+            ('full_title', GROUP_FULL_TITLE),
+            ('honorific', GROUP_HONORIFIC),
+            ('role', GROUP_ROLE),
+            ('number', GROUP_NUMBER),
+            ('position', GROUP_POSITION),
+            ('continued', GROUP_CONTINUED)
         )
 
     @staticmethod
