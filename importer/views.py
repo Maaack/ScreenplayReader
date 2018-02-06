@@ -33,3 +33,13 @@ class TextMatchViewSet(BaseViewSet):
 class GroupMatchViewSet(BaseViewSet):
     queryset = GroupMatch.objects.all()
     serializer_class = GroupMatchSerializer
+
+
+class ScreenplayViewSet(BaseViewSet):
+    queryset = Screenplay.objects.all()
+    serializer_class = ScreenplaySerializer
+
+
+class TitlePageViewSet(BaseViewSet):
+    queryset = TitlePage.objects.all()
+    serializer_class = TitlePageSerializer

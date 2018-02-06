@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from . import ImportedContent, TextMatch, GroupMatch, TextBlock, ParseOperation, InterpretOperation
+from . import ImportedContent, TextMatch, GroupMatch, TextBlock, ParseOperation, InterpretOperation, Screenplay, TitlePage
 
 
 class BaseModelSerializer(serializers.HyperlinkedModelSerializer):
@@ -56,4 +56,16 @@ class GroupMatchSerializer(BaseModelSerializer):
     class Meta:
         model = GroupMatch
         fields = ('id', 'created', 'updated', 'user', 'parse_operation', 'text_match', 'group_type', 'text')
+
+
+class ScreenplaySerializer(BaseModelSerializer):
+    class Meta:
+        model = Screenplay
+        fields = ('id', 'created', 'updated', 'user', 'interpret_operation')
+
+
+class TitlePageSerializer(BaseModelSerializer):
+    class Meta:
+        model = TitlePage
+        fields = ('id', 'created', 'updated', 'user', 'interpret_operation', 'screenplay', 'raw_text', 'text')
 
