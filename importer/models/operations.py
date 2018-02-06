@@ -27,7 +27,7 @@ class ParseOperation(BaseModel):
     def get_text_blocks(self):
         if TextBlock.objects.filter(parse_operation=self).count() == 0:
             self.split_text()
-        return TextBlock.objects.filter(parse_operation=self).all()
+        return TextBlock.objects.filter(parse_operation=self)
 
     def split_text(self):
         if self.imported_content.raw_text:
@@ -65,3 +65,36 @@ class ParseOperation(BaseModel):
 
     def parse_characters(self):
         self.parse_text_blocks('character', CharacterRegexParser)
+
+
+class InterpretOperation(BaseModel):
+    class Meta:
+        verbose_name = _('Interpret Op')
+        verbose_name_plural = _('Interpret Ops')
+        ordering = ["-created"]
+        default_related_name = 'interpret_operations'
+
+    parse_operation = models.ForeignKey('ParseOperation', models.CASCADE)
+
+    def save(self, *args, **kwargs):
+        result_object = super(InterpretOperation, self).save(*args, **kwargs)
+        self.run_operation()
+        return result_object
+
+    def run_operation(self):
+        if self.parse_operation:
+            self.interpret_title_page()
+            self.interpret_locations()
+            self.interpret_characters()
+
+    def get_text_match_set(self):
+        return TextMatch.objects.filter(parse_operation=self.parse_operation)
+
+    def interpret_title_page(self):
+        pass
+
+    def interpret_locations(self):
+        pass
+
+    def interpret_characters(self):
+        pass
