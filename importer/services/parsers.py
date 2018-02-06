@@ -91,3 +91,19 @@ class CharacterRegexParser(RegexParser):
         if re.search(honorific, r"((INT|EXT|EXT[\/\\]INT|INT[\/\\]EXT)\.+)"):
             return None
         return RegexParser.validate_result(result)
+
+
+class SlugRegexParser(RegexParser):
+    GROUP_SLUG = 1
+
+    GROUPS = (
+            ('slug', GROUP_SLUG),
+        )
+
+    @staticmethod
+    def get_pattern():
+        return r"^([A-Z]{1}[A-Z0-9\-\. \(\)\']*)$"
+
+    @staticmethod
+    def get_groups():
+        return SlugRegexParser.GROUPS
