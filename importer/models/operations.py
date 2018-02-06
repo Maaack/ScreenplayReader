@@ -143,7 +143,7 @@ class InterpretOperation(BaseModel):
             Location.objects.create(
                 interpret_operation=self,
                 screenplay=screenplay,
-                raw_text=setting_match['group_matches__text'],
+                raw_title=setting_match['group_matches__text'],
                 occurrences=setting_match['occurrences']
             )
 
