@@ -15,6 +15,11 @@ class ParseOperationViewSet(BaseViewSet):
     serializer_class = ParseOperationSerializer
 
 
+class InterpretOperationViewSet(BaseViewSet):
+    queryset = InterpretOperation.objects.all()
+    serializer_class = InterpretOperationSerializer
+
+
 class TextBlockViewSet(BaseViewSet):
     queryset = TextBlock.objects.all()
     serializer_class = TextBlockSerializer
