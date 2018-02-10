@@ -1,12 +1,18 @@
 # Screenplay Reader
 A tool for reading files in screenplay formats and parsing their structure.
 
-# Basic Idea
+## Basic Idea
 Upload a screenplay in .txt, .pdf, .fdx, and so on and get it parsed into
 the different recognizable parts of a screenplay. Get the output through
 the REST framework, or alternative future methods.
 
-# Environment Setup
+## How To Run
+### Requirements
+* docker
+* docker-machine
+
+### Setup
+Navigate into the base folder and run:
 `docker-compose up`
 
 You'll need to run migrations on the database to get it caught up.
@@ -19,16 +25,13 @@ timekeeper_web_1$> python manage.py migrate
 
 Go to `http://localhost:8000/`
 
-# Structure
+## Structure
 Django-based site with REST API framework
 
 `screenplayreader` is the Django project name
 `importer` is the Django project application
 
-Id like to split the importing models from the screenplay structure
-models as this gets bigger.
-
-# Additional Resources
+## Additional Resources
 Writing your first Django App Tutorials: https://docs.djangoproject.com/en/1.10/intro/tutorial01/
 
 Django REST framework Documentation: http://www.django-rest-framework.org/
