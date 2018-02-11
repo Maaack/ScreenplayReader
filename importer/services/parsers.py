@@ -139,7 +139,7 @@ class ActionDialogueRegexParser(RegexParser):
 
     @staticmethod
     def get_pattern():
-        return r"^(.*)$"
+        return r"^(.+)$"
 
     @staticmethod
     def get_groups():
