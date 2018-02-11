@@ -2,7 +2,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.db.models import Count
 
 from importer.models import BaseModel, TextBlock, TextMatch, Screenplay, TitlePage, Location, Character
-from importer.services.parsers import SettingRegexParser, CharacterRegexParser
+from importer.services.parsers import SettingRegexParser, \
+    CharacterRegexParser, ActionDialogueRegexParser, SlugRegexParser
 from screenplayreader.mixins.models import *
 
 
@@ -66,6 +67,12 @@ class ParseOperation(BaseModel):
 
     def parse_characters(self):
         self.parse_text_blocks(CharacterRegexParser)
+
+    def parse_slugs(self):
+        self.parse_text_blocks(SlugRegexParser)
+
+    def parse_action_dialogue(self):
+        self.parse_text_blocks(ActionDialogueRegexParser)
 
 
 class InterpretOperation(BaseModel):
