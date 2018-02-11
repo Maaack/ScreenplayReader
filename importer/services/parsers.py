@@ -121,7 +121,7 @@ class CharacterRegexParser(RegexParser):
     @staticmethod
     def validate_result(result):
         honorific = result[1][1]
-        if re.search(honorific, r"((INT|EXT|EXT[\/\\]INT|INT[\/\\]EXT)\.+)"):
+        if re.search(r"((INT|EXT|EXT[/\\]INT|INT[/\\]EXT)\.+)", honorific):
             return None
         return RegexParser.validate_result(result)
 
@@ -148,8 +148,8 @@ class ActionDialogueRegexParser(RegexParser):
     @staticmethod
     def validate_result(result):
         full_text = result[0][1]
-        if re.search(full_text, SettingRegexParser.get_pattern()):
+        if re.search(SettingRegexParser.get_pattern(), full_text):
             return None
-        elif re.search(full_text, CharacterRegexParser.get_pattern()):
+        elif re.search(CharacterRegexParser.get_pattern(), full_text):
             return None
         return RegexParser.validate_result(result)
