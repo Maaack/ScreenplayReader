@@ -62,14 +62,14 @@ class ParseOperation(BaseModel):
             for text_block in text_blocks:
                 self.parse_text(text_block, parser)
 
+    def parse_slugs(self):
+        self.parse_text_blocks(SlugRegexParser)
+
     def parse_settings(self):
         self.parse_text_blocks(SettingRegexParser)
 
     def parse_characters(self):
         self.parse_text_blocks(CharacterRegexParser)
-
-    def parse_slugs(self):
-        self.parse_text_blocks(SlugRegexParser)
 
     def parse_action_dialogue(self):
         self.parse_text_blocks(ActionDialogueRegexParser)
