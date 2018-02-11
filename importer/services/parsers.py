@@ -5,6 +5,11 @@ import re
 class RegexParser(ABC):
     @staticmethod
     @abstractmethod
+    def get_type() -> str:
+        pass
+
+    @staticmethod
+    @abstractmethod
     def get_pattern() -> str:
         pass
 
@@ -40,6 +45,26 @@ class RegexParser(ABC):
         return None
 
 
+class SlugRegexParser(RegexParser):
+    GROUP_SLUG = 1
+
+    GROUPS = (
+            ('slug', GROUP_SLUG),
+        )
+
+    @staticmethod
+    def get_type():
+        return 'slug'
+
+    @staticmethod
+    def get_pattern():
+        return r"^([A-Z]{1}[A-Z0-9\-\. \(\)\']*)$"
+
+    @staticmethod
+    def get_groups():
+        return SlugRegexParser.GROUPS
+
+
 class SettingRegexParser(RegexParser):
     GROUP_POSITION = 1
     GROUP_LOCATION = 3
@@ -50,6 +75,10 @@ class SettingRegexParser(RegexParser):
             ('location', GROUP_LOCATION),
             ('time', GROUP_TIME)
         )
+
+    @staticmethod
+    def get_type():
+        return 'setting'
 
     @staticmethod
     def get_pattern():
@@ -78,6 +107,10 @@ class CharacterRegexParser(RegexParser):
         )
 
     @staticmethod
+    def get_type():
+        return 'character'
+
+    @staticmethod
     def get_pattern():
         return r"^(([A-Z]{2,4}\.)? ?([A-Z\d\-\. ]{3,40})(#(\d+))? ?)(\(V\.O\.\)|\(O\.S\.\))? ?(\(CONT'D\))?$"
 
@@ -88,22 +121,35 @@ class CharacterRegexParser(RegexParser):
     @staticmethod
     def validate_result(result):
         honorific = result[1][1]
-        if re.search(honorific, r"((INT|EXT|EXT[\/\\]INT|INT[\/\\]EXT)\.+)"):
+        if re.search(r"((INT|EXT|EXT[/\\]INT|INT[/\\]EXT)\.+)", honorific):
             return None
         return RegexParser.validate_result(result)
 
 
-class SlugRegexParser(RegexParser):
-    GROUP_SLUG = 1
+class ActionDialogueRegexParser(RegexParser):
+    GROUP_FULL_TEXT = 0
 
     GROUPS = (
-            ('slug', GROUP_SLUG),
+            ('full_text', GROUP_FULL_TEXT),
         )
 
     @staticmethod
+    def get_type():
+        return 'action-dialogue'
+
+    @staticmethod
     def get_pattern():
-        return r"^([A-Z]{1}[A-Z0-9\-\. \(\)\']*)$"
+        return r"^(.+)$"
 
     @staticmethod
     def get_groups():
-        return SlugRegexParser.GROUPS
+        return ActionDialogueRegexParser.GROUPS
+
+    @staticmethod
+    def validate_result(result):
+        full_text = result[0][1]
+        if re.search(SettingRegexParser.get_pattern(), full_text):
+            return None
+        elif re.search(CharacterRegexParser.get_pattern(), full_text):
+            return None
+        return RegexParser.validate_result(result)

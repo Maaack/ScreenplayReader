@@ -26,6 +26,7 @@ class ImportedContent(BaseModel, RawText):
         default_related_name = 'imported_contents'
 
 
+# TODO: Delete or use this
 class TextFormat(BaseModel):
     class Meta:
         verbose_name = _('Format')
@@ -45,6 +46,7 @@ class TextFormat(BaseModel):
             return self.description[:25]
 
 
+# TODO: Delete or use this
 class ElementFormat(BaseModel):
     class Meta:
         verbose_name = _("Element Format")
