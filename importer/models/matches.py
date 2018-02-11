@@ -16,6 +16,9 @@ class TextBlock(BaseModel):
     index = models.IntegerField(_('Index'), db_index=True)
     text = models.TextField(_('Text'))
 
+    def __str__(self):
+        return self.text[0:25]
+
 
 class TextMatch(BaseModel):
     class Meta:
@@ -39,6 +42,9 @@ class TextMatch(BaseModel):
                     text=group_match[1]
                 )
 
+    def __str__(self):
+        return self.text[0:25]
+
 
 class GroupMatch(BaseModel):
     class Meta:
@@ -51,3 +57,7 @@ class GroupMatch(BaseModel):
     text_match = models.ForeignKey('TextMatch', models.CASCADE)
     group_type = models.CharField(_('Type'), max_length=25, db_index=True)
     text = models.TextField(_('Text'))
+
+    def __str__(self):
+        return self.text[0:25]
+
