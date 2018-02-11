@@ -5,6 +5,11 @@ import re
 class RegexParser(ABC):
     @staticmethod
     @abstractmethod
+    def get_type() -> str:
+        pass
+
+    @staticmethod
+    @abstractmethod
     def get_pattern() -> str:
         pass
 
@@ -52,6 +57,10 @@ class SettingRegexParser(RegexParser):
         )
 
     @staticmethod
+    def get_type():
+        return 'setting'
+
+    @staticmethod
     def get_pattern():
         return r"^((INT|EXT|EXT[\/\\]INT|INT[\/\\]EXT)\.+)([\w\s']*)(-\s?([\w\s']*))?$"
 
@@ -78,6 +87,10 @@ class CharacterRegexParser(RegexParser):
         )
 
     @staticmethod
+    def get_type():
+        return 'character'
+
+    @staticmethod
     def get_pattern():
         return r"^(([A-Z]{2,4}\.)? ?([A-Z\d\-\. ]{3,40})(#(\d+))? ?)(\(V\.O\.\)|\(O\.S\.\))? ?(\(CONT'D\))?$"
 
@@ -101,6 +114,10 @@ class SlugRegexParser(RegexParser):
         )
 
     @staticmethod
+    def get_type():
+        return 'slug'
+
+    @staticmethod
     def get_pattern():
         return r"^([A-Z]{1}[A-Z0-9\-\. \(\)\']*)$"
 
@@ -115,6 +132,10 @@ class ActionDialogueRegexParser(RegexParser):
     GROUPS = (
             ('full_text', GROUP_FULL_TEXT),
         )
+
+    @staticmethod
+    def get_type():
+        return 'action-dialogue'
 
     @staticmethod
     def get_pattern():
