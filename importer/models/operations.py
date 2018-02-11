@@ -7,9 +7,6 @@ from screenplayreader.mixins.models import *
 
 
 class ParseOperation(BaseModel):
-    PARSER_TYPE_SETTING = 'setting'
-    PARSER_TYPE_CHARACTER = 'character'
-
     class Meta:
         verbose_name = _('Parse Op')
         verbose_name_plural = _('Parse Ops')
@@ -44,7 +41,8 @@ class ParseOperation(BaseModel):
                     text=line
                 )
 
-    def parse_text(self, match_type, text_block, parser):
+    def parse_text(self, text_block, parser):
+        match_type = parser.get_type()
         text = text_block.text
         match = parser.search(text)
         if match:
@@ -56,18 +54,18 @@ class ParseOperation(BaseModel):
             )
             text_match.save_group_matches(match)
 
-    def parse_text_blocks(self, match_type, parser_class):
+    def parse_text_blocks(self, parser_class):
         text_blocks = self.get_text_blocks()
         if text_blocks.count() > 0:
             parser = parser_class()
             for text_block in text_blocks:
-                self.parse_text(match_type, text_block, parser)
+                self.parse_text(text_block, parser)
 
     def parse_settings(self):
-        self.parse_text_blocks(self.PARSER_TYPE_SETTING, SettingRegexParser)
+        self.parse_text_blocks(SettingRegexParser)
 
     def parse_characters(self):
-        self.parse_text_blocks(self.PARSER_TYPE_CHARACTER, CharacterRegexParser)
+        self.parse_text_blocks(CharacterRegexParser)
 
 
 class InterpretOperation(BaseModel):
