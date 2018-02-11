@@ -23,8 +23,10 @@ class ParseOperation(BaseModel):
 
     def run_operation(self):
         if self.imported_content:
+            self.parse_slugs()
             self.parse_settings()
             self.parse_characters()
+            self.parse_action_dialogue()
 
     def get_text_blocks(self):
         if TextBlock.objects.filter(parse_operation=self).count() == 0:
