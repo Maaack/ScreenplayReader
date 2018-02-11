@@ -107,3 +107,28 @@ class SlugRegexParser(RegexParser):
     @staticmethod
     def get_groups():
         return SlugRegexParser.GROUPS
+
+
+class ActionDialogueRegexParser(RegexParser):
+    GROUP_FULL_TEXT = 0
+
+    GROUPS = (
+            ('full_text', GROUP_FULL_TEXT),
+        )
+
+    @staticmethod
+    def get_pattern():
+        return r"^(.*)$"
+
+    @staticmethod
+    def get_groups():
+        return ActionDialogueRegexParser.GROUPS
+
+    @staticmethod
+    def validate_result(result):
+        full_text = result[0][1]
+        if re.search(full_text, SettingRegexParser.get_pattern()):
+            return None
+        elif re.search(full_text, CharacterRegexParser.get_pattern()):
+            return None
+        return RegexParser.validate_result(result)
