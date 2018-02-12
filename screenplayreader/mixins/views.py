@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from rest_framework.generics import RetrieveUpdateDestroyAPIView, ListCreateAPIView
 from rest_framework.viewsets import ModelViewSet
+from .pagination import StandardResultsSetPagination
 
 
 class JSONResponse(HttpResponse):
@@ -53,6 +54,7 @@ class BaseListView(ListCreateAPIView):
     List all object instances, or create a new object instance.
     """
     permission_classes = (AllowAny,)
+    pagination_class = StandardResultsSetPagination
 
     class Meta:
         abstract = True
@@ -63,6 +65,7 @@ class BaseDetailView(RetrieveUpdateDestroyAPIView):
     Retrieve, update or delete an object instance.
     """
     permission_classes = (AllowAny,)
+    pagination_class = StandardResultsSetPagination
 
     class Meta:
         abstract = True
@@ -73,6 +76,7 @@ class BaseViewSet(ModelViewSet):
     Retrieve, update or delete an object instance.
     """
     permission_classes = (AllowAny,)
+    pagination_class = StandardResultsSetPagination
 
     class Meta:
         abstract = True

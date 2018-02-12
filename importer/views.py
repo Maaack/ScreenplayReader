@@ -2,7 +2,6 @@
 
 from screenplayreader.mixins.views import BaseViewSet
 from .models.serializers import *
-from .services.pagination import StandardResultsSetPagination
 
 
 # Create your views here.
@@ -24,19 +23,16 @@ class InterpretOperationViewSet(BaseViewSet):
 class TextBlockViewSet(BaseViewSet):
     queryset = TextBlock.objects.all()
     serializer_class = TextBlockSerializer
-    pagination_class = StandardResultsSetPagination
 
 
 class TextMatchViewSet(BaseViewSet):
     queryset = TextMatch.objects.all()
     serializer_class = TextMatchSerializer
-    pagination_class = StandardResultsSetPagination
 
 
 class GroupMatchViewSet(BaseViewSet):
     queryset = GroupMatch.objects.all()
     serializer_class = GroupMatchSerializer
-    pagination_class = StandardResultsSetPagination
 
 
 class ScreenplayViewSet(BaseViewSet):
