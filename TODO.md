@@ -17,6 +17,7 @@ Get the tool working from end-to-end. Import a screenplay and get the underlying
 * Incorporate ML
 
 ### Interpreter
+# Refactor InterpretOp into separate services
 * Generate Times from location slugs
 # Split into a separate app
 * Determine dialogue from action by following characters
