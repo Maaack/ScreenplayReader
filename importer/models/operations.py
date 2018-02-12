@@ -47,7 +47,7 @@ class ParseOperation(BaseModel):
     def parse_text(self, text_block, parser):
         match_type = parser.get_type()
         text = text_block.text
-        match = parser.search(text)
+        match = parser.parse(text)
         if match:
             text_match = TextMatch.objects.create(
                 parse_operation=self,
