@@ -37,6 +37,8 @@ class Scene(BaseModel):
         ordering = ["-created"]
         default_related_name = 'scenes'
 
+    interpret_operation = models.ForeignKey('InterpretOperation', models.CASCADE)
+    screenplay = models.ForeignKey('Screenplay', models.CASCADE)
     location = models.ForeignKey('Location', models.CASCADE)
     characters = models.ManyToManyField('Character')
 
