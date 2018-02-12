@@ -16,6 +16,21 @@ class Screenplay(BaseModel, RawText):
         return self.text[:25]
 
 
+class Line(BaseModel):
+    class Meta:
+        verbose_name = _('Line')
+        verbose_name_plural = _('Lines')
+        ordering = ["index"]
+        default_related_name = 'lines'
+
+    interpret_operation = models.ForeignKey('InterpretOperation', models.CASCADE)
+    index = models.IntegerField(_('Index'), db_index=True)
+    text = models.TextField(_('Text'))
+
+    def __str__(self):
+        return self.text[0:25]
+
+
 class TitlePage(BaseModel, RawTitle, RawText):
     class Meta:
         verbose_name = _("Title Page")
