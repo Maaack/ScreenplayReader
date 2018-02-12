@@ -172,15 +172,15 @@ class InterpretOperation(BaseModel):
 
     def interpret_characters(self):
         screenplay = self.get_screenplay()
-        settings_match = self.get_text_match_character_set().filter(group_matches__group_type='full_title'). \
+        characters_match = self.get_text_match_character_set().filter(group_matches__group_type='full_title'). \
             values('group_matches__text').order_by('group_matches__text'). \
             annotate(occurrences=Count('group_matches__text')).order_by('-occurrences')
-        for setting_match in settings_match:
+        for character_match in characters_match:
             Character.objects.create(
                 interpret_operation=self,
                 screenplay=screenplay,
-                raw_title=setting_match['group_matches__text'],
-                occurrences=setting_match['occurrences']
+                raw_title=character_match['group_matches__text'],
+                occurrences=character_match['occurrences']
             )
 
     def interpret_scenes(self):
