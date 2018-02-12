@@ -10,14 +10,14 @@ Get the tool working from end-to-end. Import a screenplay and get the underlying
 * Add custom manager for TextBlock to exclude empty string
 
 ### Parser
-# Refactor RegexParser to use static methods
-# Refactor ParseOperation to not be so complicated
-# Review splitting ParseResult out of ParseOperation
-# Split into a separate app
+* Refactor RegexParser to use static methods
+* Refactor ParseOperation to not be so complicated
+* Review splitting ParseResult out of ParseOperation
+* Split into a separate app
 * Incorporate ML
 
 ### Interpreter
-# Refactor InterpretOp into separate services
+* Refactor InterpretOp into separate services
 * Generate Times from location slugs
-# Split into a separate app
+* Split into a separate app
 * Determine dialogue from action by following characters
