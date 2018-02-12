@@ -29,9 +29,9 @@ class ParseOperation(BaseModel):
             self.parse_action_dialogue()
 
     def get_text_blocks(self):
-        if TextBlock.objects.filter(parse_operation=self).count() == 0:
+        if self.text_blocks.count() == 0:
             self.split_text()
-        return TextBlock.objects.filter(parse_operation=self)
+        return self.text_blocks.all()
 
     def split_text(self):
         if self.imported_content.raw_text:
@@ -120,6 +120,21 @@ class InterpretOperation(BaseModel):
 
     def get_text_match_character_set(self):
         return self.get_text_match_set().filter(match_type=CharacterRegexParser.get_type())
+
+    def get_title_page(self):
+        if self.title_pages.count() == 0:
+            self.interpret_title_page()
+        return self.title_pages.all()
+
+    def get_locations(self):
+        if self.locations.count() == 0:
+            self.interpret_locations()
+        return self.locations.all()
+
+    def get_characters(self):
+        if self.characters.count() == 0:
+            self.interpret_characters()
+        return self.characters.all()
 
     def interpret_title_page(self):
         screenplay = self.get_screenplay()
