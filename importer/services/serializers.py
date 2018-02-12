@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from importer.models import ImportedContent, TextMatch, GroupMatch, TextBlock, ParseOperation, InterpretOperation, Screenplay, \
-    TitlePage, Location, Character
+    TitlePage, Location, Character, Scene
 
 
 class BaseModelSerializer(serializers.HyperlinkedModelSerializer):
@@ -69,6 +69,12 @@ class TitlePageSerializer(BaseModelSerializer):
     class Meta:
         model = TitlePage
         fields = ('id', 'created', 'updated', 'user', 'interpret_operation', 'screenplay', 'raw_text', 'text')
+
+
+class SceneSerializer(BaseModelSerializer):
+    class Meta:
+        model = Scene
+        fields = ('id', 'created', 'updated', 'user', 'interpret_operation', 'screenplay', 'location', 'characters')
 
 
 class LocationSerializer(BaseModelSerializer):

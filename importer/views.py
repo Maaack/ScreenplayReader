@@ -1,7 +1,7 @@
 # Create your views here.
 
+from importer.services.serializers import *
 from screenplayreader.mixins.views import BaseViewSet
-from .models.serializers import *
 
 
 # Create your views here.
@@ -43,6 +43,11 @@ class ScreenplayViewSet(BaseViewSet):
 class TitlePageViewSet(BaseViewSet):
     queryset = TitlePage.objects.all()
     serializer_class = TitlePageSerializer
+
+
+class SceneViewSet(BaseViewSet):
+    queryset = Scene.objects.all()
+    serializer_class = SceneSerializer
 
 
 class LocationViewSet(BaseViewSet):
