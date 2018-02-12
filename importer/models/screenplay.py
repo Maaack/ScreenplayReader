@@ -30,6 +30,17 @@ class TitlePage(BaseModel, RawTitle, RawText):
         return self.title
 
 
+class Scene(BaseModel):
+    class Meta:
+        verbose_name = _("Scene")
+        verbose_name_plural = _("Scenes")
+        ordering = ["-created"]
+        default_related_name = 'scenes'
+
+    location = models.ForeignKey('Location', models.CASCADE)
+    characters = models.ManyToManyField('Character')
+
+
 class CountedTitle(BaseModel, RawTitle):
     class Meta:
         abstract = True
