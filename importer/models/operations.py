@@ -1,7 +1,7 @@
 from django.utils.translation import ugettext_lazy as _
 from django.db.models import Count
 
-from importer.models import BaseModel, TextBlock, TextMatch, Screenplay, TitlePage, Location, Character
+from importer.models import BaseModel, TextBlock, TextMatch, Screenplay, Scene, TitlePage, Location, Character
 from importer.services.parsers import SettingRegexParser, \
     CharacterRegexParser, ActionDialogueRegexParser, SlugRegexParser
 from screenplayreader.mixins.models import *
@@ -98,6 +98,7 @@ class InterpretOperation(BaseModel):
             self.interpret_title_page()
             self.interpret_locations()
             self.interpret_characters()
+            self.interpret_scenes()
 
     def get_screenplay(self):
         if Screenplay.objects.filter(interpret_operation=self).count() == 0:
@@ -115,10 +116,10 @@ class InterpretOperation(BaseModel):
         return TextMatch.objects.filter(parse_operation=self.parse_operation)
 
     def get_text_match_setting_set(self):
-        return self.get_text_match_set().filter(match_type=ParseOperation.PARSER_TYPE_SETTING)
+        return self.get_text_match_set().filter(match_type=SettingRegexParser.get_type())
 
     def get_text_match_character_set(self):
-        return self.get_text_match_set().filter(match_type=ParseOperation.PARSER_TYPE_CHARACTER)
+        return self.get_text_match_set().filter(match_type=CharacterRegexParser.get_type())
 
     def interpret_title_page(self):
         screenplay = self.get_screenplay()
@@ -166,3 +167,13 @@ class InterpretOperation(BaseModel):
                 raw_title=setting_match['group_matches__text'],
                 occurrences=setting_match['occurrences']
             )
+
+    def interpret_scenes(self):
+        if self.characters and self.locations:
+            screenplay = self.get_screenplay()
+            for location in self.locations.all():
+                Scene.objects.create(
+                    interpret_operation=self,
+                    screenplay=screenplay,
+                    location=location
+                )
