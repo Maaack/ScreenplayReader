@@ -135,7 +135,10 @@ class CharacterRegexParser(RegexParser):
     @staticmethod
     def validate_result(result):
         honorific = result[1][1]
+        full_title = result[0][1]
         if re.search(r"((INT|EXT|EXT[/\\]INT|INT[/\\]EXT)\.+)", honorific):
+            return None
+        if not re.search(r"(([^A-Za-z]*[A-Za-z][^A-Za-z]*){2,})", full_title):
             return None
         return RegexParser.validate_result(result)
 
