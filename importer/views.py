@@ -40,6 +40,11 @@ class ScreenplayViewSet(BaseViewSet):
     serializer_class = ScreenplaySerializer
 
 
+class LineViewSet(BaseViewSet):
+    queryset = Line.objects.all()
+    serializer_class = LineSerializer
+
+
 class TitlePageViewSet(BaseViewSet):
     queryset = TitlePage.objects.all()
     serializer_class = TitlePageSerializer
