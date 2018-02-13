@@ -200,11 +200,41 @@ class InterpretOperation(BaseModel):
             character.save()
 
     def interpret_scenes(self):
-        if self.characters and self.locations:
-            screenplay = self.get_screenplay()
-            for location in self.locations.all():
-                Scene.objects.create(
-                    interpret_operation=self,
-                    screenplay=screenplay,
-                    location=location
-                )
+        screenplay = self.get_screenplay()
+        settings = self.get_text_match_setting_set().order_by('text_block__index')
+        previous_index = 0
+        previous_scene = None
+        for setting in settings.all():
+            try:
+                location_line = Line.objects.filter(text__exact=setting.text).first()
+            except Line.DoesNotExist:
+                continue
+            except Line.MultipleObjectsReturned:
+                continue
+            location = location_line.locations.first()
+            current_index = location_line.index
+            if previous_scene:
+                InterpretOperation.save_extras_to_scene(previous_scene, previous_index, current_index)
+            current_scene = Scene.objects.create(
+                interpret_operation=self,
+                screenplay=screenplay,
+                location=location
+            )
+            previous_index = current_index
+            previous_scene = current_scene
+
+        if previous_scene:
+            last_text_match = self.get_text_match_setting_set().order_by('text_block__index').last()
+            try:
+                last_index = last_text_match.text_block.index
+            except AttributeError:
+                return None
+            InterpretOperation.save_extras_to_scene(previous_scene, previous_index, last_index)
+
+    @staticmethod
+    def save_extras_to_scene(scene, start_index, end_index):
+        scene_lines = Line.objects.filter(index__gte=start_index, index__lt=end_index).all()
+        scene.lines.set(scene_lines)
+        scene_characters = Character.objects.filter(lines__in=scene_lines).distinct()
+        scene.characters.set(scene_characters)
+        return scene.save()
