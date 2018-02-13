@@ -1,7 +1,7 @@
 from django.utils.translation import ugettext_lazy as _
 from django.db.models import Count
 
-from importer.models import BaseModel, TextBlock, TextMatch, Screenplay, Scene, TitlePage, Location, Character
+from importer.models import BaseModel, TextBlock, TextMatch, Screenplay, Scene, TitlePage, Location, Character, Line
 from importer.services.parsers import SettingRegexParser, \
     CharacterRegexParser, ActionDialogueRegexParser, SlugRegexParser
 from screenplayreader.mixins.models import *
@@ -95,6 +95,7 @@ class InterpretOperation(BaseModel):
 
     def run_operation(self):
         if self.parse_operation:
+            self.interpret_lines()
             self.interpret_title_page()
             self.interpret_locations()
             self.interpret_characters()
@@ -135,6 +136,17 @@ class InterpretOperation(BaseModel):
         if self.characters.count() == 0:
             self.interpret_characters()
         return self.characters.all()
+
+    def interpret_lines(self):
+        screenplay = self.get_screenplay()
+        text_blocks = self.get_text_blocks_set().all()
+        for text_block in text_blocks:
+            Line.objects.create(
+                interpret_operation=self,
+                screenplay=screenplay,
+                index=text_block.index,
+                text=text_block.text
+            )
 
     def interpret_title_page(self):
         screenplay = self.get_screenplay()
