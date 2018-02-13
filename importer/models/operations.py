@@ -1,7 +1,7 @@
 from django.utils.translation import ugettext_lazy as _
 from django.db.models import Count
 
-from importer.models import BaseModel, TextBlock, TextMatch, Screenplay, TitlePage, Location, Character
+from importer.models import BaseModel, TextBlock, TextMatch, Screenplay, Scene, TitlePage, Location, Character, Line
 from importer.services.parsers import SettingRegexParser, \
     CharacterRegexParser, ActionDialogueRegexParser, SlugRegexParser
 from screenplayreader.mixins.models import *
@@ -29,9 +29,9 @@ class ParseOperation(BaseModel):
             self.parse_action_dialogue()
 
     def get_text_blocks(self):
-        if TextBlock.objects.filter(parse_operation=self).count() == 0:
+        if self.text_blocks.count() == 0:
             self.split_text()
-        return TextBlock.objects.filter(parse_operation=self)
+        return self.text_blocks.all()
 
     def split_text(self):
         if self.imported_content.raw_text:
@@ -47,7 +47,7 @@ class ParseOperation(BaseModel):
     def parse_text(self, text_block, parser):
         match_type = parser.get_type()
         text = text_block.text
-        match = parser.search(text)
+        match = parser.parse(text)
         if match:
             text_match = TextMatch.objects.create(
                 parse_operation=self,
@@ -95,9 +95,11 @@ class InterpretOperation(BaseModel):
 
     def run_operation(self):
         if self.parse_operation:
+            self.interpret_lines()
             self.interpret_title_page()
             self.interpret_locations()
             self.interpret_characters()
+            self.interpret_scenes()
 
     def get_screenplay(self):
         if Screenplay.objects.filter(interpret_operation=self).count() == 0:
@@ -115,10 +117,36 @@ class InterpretOperation(BaseModel):
         return TextMatch.objects.filter(parse_operation=self.parse_operation)
 
     def get_text_match_setting_set(self):
-        return self.get_text_match_set().filter(match_type=ParseOperation.PARSER_TYPE_SETTING)
+        return self.get_text_match_set().filter(match_type=SettingRegexParser.get_type())
 
     def get_text_match_character_set(self):
-        return self.get_text_match_set().filter(match_type=ParseOperation.PARSER_TYPE_CHARACTER)
+        return self.get_text_match_set().filter(match_type=CharacterRegexParser.get_type())
+
+    def get_title_page(self):
+        if self.title_pages.count() == 0:
+            self.interpret_title_page()
+        return self.title_pages.all()
+
+    def get_locations(self):
+        if self.locations.count() == 0:
+            self.interpret_locations()
+        return self.locations.all()
+
+    def get_characters(self):
+        if self.characters.count() == 0:
+            self.interpret_characters()
+        return self.characters.all()
+
+    def interpret_lines(self):
+        screenplay = self.get_screenplay()
+        text_blocks = self.get_text_blocks_set().all()
+        for text_block in text_blocks:
+            Line.objects.create(
+                interpret_operation=self,
+                screenplay=screenplay,
+                index=text_block.index,
+                text=text_block.text
+            )
 
     def interpret_title_page(self):
         screenplay = self.get_screenplay()
@@ -147,22 +175,67 @@ class InterpretOperation(BaseModel):
             values('group_matches__text').order_by('group_matches__text'). \
             annotate(occurrences=Count('group_matches__text')).order_by('-occurrences')
         for setting_match in settings_match:
-            Location.objects.create(
+            location = Location.objects.create(
                 interpret_operation=self,
                 screenplay=screenplay,
                 raw_title=setting_match['group_matches__text'],
                 occurrences=setting_match['occurrences']
             )
+            location.lines.set(Line.objects.filter(text__icontains=location.title))
+            location.save()
 
     def interpret_characters(self):
         screenplay = self.get_screenplay()
-        settings_match = self.get_text_match_character_set().filter(group_matches__group_type='full_title'). \
+        characters_match = self.get_text_match_character_set().filter(group_matches__group_type='full_title'). \
             values('group_matches__text').order_by('group_matches__text'). \
             annotate(occurrences=Count('group_matches__text')).order_by('-occurrences')
-        for setting_match in settings_match:
-            Character.objects.create(
+        for character_match in characters_match:
+            character = Character.objects.create(
                 interpret_operation=self,
                 screenplay=screenplay,
-                raw_title=setting_match['group_matches__text'],
-                occurrences=setting_match['occurrences']
+                raw_title=character_match['group_matches__text'],
+                occurrences=character_match['occurrences']
             )
+            character.lines.set(Line.objects.filter(text__icontains=character.title))
+            character.save()
+
+    def interpret_scenes(self):
+        screenplay = self.get_screenplay()
+        settings = self.get_text_match_setting_set().order_by('text_block__index')
+        previous_index = 0
+        previous_scene = None
+        for setting in settings.all():
+            try:
+                location_index = setting.text_block.index
+                location_line = Line.objects.get(index=location_index)
+            except Line.DoesNotExist:
+                continue
+            except Line.MultipleObjectsReturned:
+                continue
+            location = location_line.locations.first()
+            current_index = location_line.index
+            if previous_scene:
+                InterpretOperation.save_extras_to_scene(previous_scene, previous_index, current_index)
+            current_scene = Scene.objects.create(
+                interpret_operation=self,
+                screenplay=screenplay,
+                location=location
+            )
+            previous_index = current_index
+            previous_scene = current_scene
+
+        if previous_scene:
+            last_text_match = self.get_text_match_setting_set().order_by('text_block__index').last()
+            try:
+                last_index = last_text_match.text_block.index
+            except AttributeError:
+                return None
+            InterpretOperation.save_extras_to_scene(previous_scene, previous_index, last_index)
+
+    @staticmethod
+    def save_extras_to_scene(scene, start_index, end_index):
+        scene_lines = Line.objects.filter(index__gte=start_index, index__lt=end_index).all()
+        scene.lines.set(scene_lines)
+        scene_characters = Character.objects.filter(lines__in=scene_lines).distinct()
+        scene.characters.set(scene_characters)
+        return scene.save()

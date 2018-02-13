@@ -2,7 +2,10 @@
 Get the tool working from end-to-end. Import a screenplay and get the underlying structure.
 
 ## Next Sprint
-* Create Scenes that tie locations, characters, and action/dialogue together
+* Generate Times from location slugs
+* Add details to scene (ext./int., time)
+* Evaluate scene data from imports
+* Uppercase titles of characters and locations
 
 ## Backlog
 * Import 100 screenplays from the public domain
@@ -10,8 +13,14 @@ Get the tool working from end-to-end. Import a screenplay and get the underlying
 * Add custom manager for TextBlock to exclude empty string
 
 ### Parser
+* Refactor RegexParser to use static methods
+* Refactor ParseOperation to not be so complicated
+* Review splitting ParseResult out of ParseOperation
+* Split into a separate app
 * Incorporate ML
 
 ### Interpreter
-* Generate Times from location slugs
+* Refactor InterpretOp into separate services
+* Create non-reversed link between TextBlocks and Lines
+* Split into a separate app
 * Determine dialogue from action by following characters

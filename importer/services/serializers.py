@@ -1,6 +1,6 @@
 from rest_framework import serializers
-from . import ImportedContent, TextMatch, GroupMatch, TextBlock, ParseOperation, InterpretOperation, Screenplay, \
-    TitlePage, Location, Character
+from importer.models import ImportedContent, TextMatch, GroupMatch, TextBlock, ParseOperation, InterpretOperation, Screenplay, \
+    TitlePage, Location, Character, Scene, Line
 
 
 class BaseModelSerializer(serializers.HyperlinkedModelSerializer):
@@ -65,21 +65,47 @@ class ScreenplaySerializer(BaseModelSerializer):
         fields = ('id', 'created', 'updated', 'user', 'interpret_operation')
 
 
+class LineSerializer(BaseModelSerializer):
+    class Meta:
+        model = Line
+        fields = ('id', 'created', 'updated', 'user', 'interpret_operation', 'screenplay', 'index', 'text')
+
+
 class TitlePageSerializer(BaseModelSerializer):
     class Meta:
         model = TitlePage
         fields = ('id', 'created', 'updated', 'user', 'interpret_operation', 'screenplay', 'raw_text', 'text')
 
 
+class SceneSerializer(BaseModelSerializer):
+    class Meta:
+        model = Scene
+        fields = ('id', 'created', 'updated', 'user', 'interpret_operation', 'screenplay', 'location', 'characters',
+                  'location_name', 'character_names', 'scene_text')
+
+    location_name = serializers.SerializerMethodField()
+    character_names = serializers.SerializerMethodField()
+    scene_text = serializers.SerializerMethodField()
+
+    def get_location_name(self, scene):
+        return scene.location.title
+
+    def get_character_names(self, scene):
+        return [character['title'] for character in scene.characters.values('title')]
+
+    def get_scene_text(self, scene):
+        return [line['text'] for line in scene.lines.values('text')]
+
+
 class LocationSerializer(BaseModelSerializer):
     class Meta:
         model = Location
         fields = ('id', 'created', 'updated', 'user', 'interpret_operation', 'screenplay', 'raw_title', 'title',
-                  'occurrences')
+                  'occurrences', 'lines')
 
 
 class CharacterSerializer(BaseModelSerializer):
     class Meta:
         model = Character
         fields = ('id', 'created', 'updated', 'user', 'interpret_operation', 'screenplay', 'raw_title', 'title',
-                  'occurrences')
+                  'occurrences', 'lines')

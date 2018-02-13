@@ -16,6 +16,22 @@ class Screenplay(BaseModel, RawText):
         return self.text[:25]
 
 
+class Line(BaseModel):
+    class Meta:
+        verbose_name = _('Line')
+        verbose_name_plural = _('Lines')
+        ordering = ["index"]
+        default_related_name = 'lines'
+
+    interpret_operation = models.ForeignKey('InterpretOperation', models.CASCADE)
+    screenplay = models.ForeignKey('Screenplay', models.CASCADE)
+    index = models.IntegerField(_('Index'), db_index=True)
+    text = models.TextField(_('Text'))
+
+    def __str__(self):
+        return self.text[0:25]
+
+
 class TitlePage(BaseModel, RawTitle, RawText):
     class Meta:
         verbose_name = _("Title Page")
@@ -25,9 +41,24 @@ class TitlePage(BaseModel, RawTitle, RawText):
 
     interpret_operation = models.ForeignKey('InterpretOperation', models.CASCADE)
     screenplay = models.ForeignKey('Screenplay', models.CASCADE)
+    lines = models.ManyToManyField('Line')
 
     def __str__(self):
         return self.title
+
+
+class Scene(BaseModel):
+    class Meta:
+        verbose_name = _("Scene")
+        verbose_name_plural = _("Scenes")
+        ordering = ["-created"]
+        default_related_name = 'scenes'
+
+    interpret_operation = models.ForeignKey('InterpretOperation', models.CASCADE)
+    screenplay = models.ForeignKey('Screenplay', models.CASCADE)
+    location = models.ForeignKey('Location', models.CASCADE)
+    characters = models.ManyToManyField('Character')
+    lines = models.ManyToManyField('Line')
 
 
 class CountedTitle(BaseModel, RawTitle):
@@ -36,6 +67,7 @@ class CountedTitle(BaseModel, RawTitle):
     interpret_operation = models.ForeignKey('InterpretOperation', models.CASCADE)
     screenplay = models.ForeignKey('Screenplay', models.CASCADE)
     occurrences = models.PositiveIntegerField('Occurrences', db_index=True)
+    lines = models.ManyToManyField('Line')
 
     def __str__(self):
         return self.title

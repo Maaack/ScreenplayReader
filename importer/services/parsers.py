@@ -2,6 +2,16 @@ from abc import ABC, abstractmethod
 import re
 
 
+class LineParser:
+    @staticmethod
+    def get_type() -> str:
+        return 'line'
+
+    @staticmethod
+    def parse(text):
+        return text.splitlines()
+
+
 class RegexParser(ABC):
     @staticmethod
     @abstractmethod
@@ -26,6 +36,8 @@ class RegexParser(ABC):
     def clean_text(text):
         return text.strip()
 
+    # TODO: Make staticmethod
+    # def static_match_to_group(match, groups):
     def match_to_group(self, match):
         result = []
         groups = self.get_groups()
@@ -36,7 +48,9 @@ class RegexParser(ABC):
                 result.append((group[0], clean_text))
         return result
 
-    def search(self, text: str):
+    # TODO: Make staticmethod
+    # def static_parse(text, pattern, groups, validate_method):
+    def parse(self, text: str):
         pattern = self.get_pattern()
         match = re.search(pattern, text)
         if match:
@@ -121,7 +135,10 @@ class CharacterRegexParser(RegexParser):
     @staticmethod
     def validate_result(result):
         honorific = result[1][1]
+        full_title = result[0][1]
         if re.search(r"((INT|EXT|EXT[/\\]INT|INT[/\\]EXT)\.+)", honorific):
+            return None
+        if not re.search(r"(([^A-Za-z]*[A-Za-z][^A-Za-z]*){2,})", full_title):
             return None
         return RegexParser.validate_result(result)
 
