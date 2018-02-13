@@ -87,11 +87,11 @@ class LocationSerializer(BaseModelSerializer):
     class Meta:
         model = Location
         fields = ('id', 'created', 'updated', 'user', 'interpret_operation', 'screenplay', 'raw_title', 'title',
-                  'occurrences')
+                  'occurrences', 'lines')
 
 
 class CharacterSerializer(BaseModelSerializer):
     class Meta:
         model = Character
         fields = ('id', 'created', 'updated', 'user', 'interpret_operation', 'screenplay', 'raw_title', 'title',
-                  'occurrences')
+                  'occurrences', 'lines')
