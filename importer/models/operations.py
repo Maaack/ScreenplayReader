@@ -175,12 +175,14 @@ class InterpretOperation(BaseModel):
             values('group_matches__text').order_by('group_matches__text'). \
             annotate(occurrences=Count('group_matches__text')).order_by('-occurrences')
         for setting_match in settings_match:
-            Location.objects.create(
+            location = Location.objects.create(
                 interpret_operation=self,
                 screenplay=screenplay,
                 raw_title=setting_match['group_matches__text'],
                 occurrences=setting_match['occurrences']
             )
+            location.lines.set(Line.objects.filter(text__icontains=location.title))
+            location.save()
 
     def interpret_characters(self):
         screenplay = self.get_screenplay()
@@ -188,12 +190,14 @@ class InterpretOperation(BaseModel):
             values('group_matches__text').order_by('group_matches__text'). \
             annotate(occurrences=Count('group_matches__text')).order_by('-occurrences')
         for character_match in characters_match:
-            Character.objects.create(
+            character = Character.objects.create(
                 interpret_operation=self,
                 screenplay=screenplay,
                 raw_title=character_match['group_matches__text'],
                 occurrences=character_match['occurrences']
             )
+            character.lines.set(Line.objects.filter(text__icontains=character.title))
+            character.save()
 
     def interpret_scenes(self):
         if self.characters and self.locations:
