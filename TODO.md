@@ -2,7 +2,10 @@
 Get the tool working from end-to-end. Import a screenplay and get the underlying structure.
 
 ## Next Sprint
-* Create Scenes that tie locations, characters, and action/dialogue together
+* Generate Times from location slugs
+* Add details to scene (ext./int., time)
+* Evaluate scene data from imports
+* Uppercase titles of characters and locations
 
 ## Backlog
 * Import 100 screenplays from the public domain
@@ -18,6 +21,6 @@ Get the tool working from end-to-end. Import a screenplay and get the underlying
 
 ### Interpreter
 * Refactor InterpretOp into separate services
-* Generate Times from location slugs
+* Create non-reversed link between TextBlocks and Lines
 * Split into a separate app
 * Determine dialogue from action by following characters
