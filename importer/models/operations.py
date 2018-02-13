@@ -206,7 +206,8 @@ class InterpretOperation(BaseModel):
         previous_scene = None
         for setting in settings.all():
             try:
-                location_line = Line.objects.filter(text__exact=setting.text).first()
+                location_index = setting.text_block.index
+                location_line = Line.objects.get(index=location_index)
             except Line.DoesNotExist:
                 continue
             except Line.MultipleObjectsReturned:
