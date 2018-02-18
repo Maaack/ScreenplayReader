@@ -5,7 +5,6 @@ Get the tool working from end-to-end. Import a screenplay and get the underlying
 * Generate Times from location slugs
 * Add details to scene (ext./int., time)
 * Evaluate scene data from imports
-* Uppercase titles of characters and locations
 
 ## Backlog
 * Import 100 screenplays from the public domain

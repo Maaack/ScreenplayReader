@@ -178,7 +178,7 @@ class InterpretOperation(BaseModel):
             location = Location.objects.create(
                 interpret_operation=self,
                 screenplay=screenplay,
-                raw_title=setting_match['group_matches__text'],
+                title=setting_match['group_matches__text'],
                 occurrences=setting_match['occurrences']
             )
             location.lines.set(Line.objects.filter(text__icontains=location.title))
@@ -193,7 +193,7 @@ class InterpretOperation(BaseModel):
             character = Character.objects.create(
                 interpret_operation=self,
                 screenplay=screenplay,
-                raw_title=character_match['group_matches__text'],
+                title=character_match['group_matches__text'],
                 occurrences=character_match['occurrences']
             )
             character.lines.set(Line.objects.filter(text__icontains=character.title))

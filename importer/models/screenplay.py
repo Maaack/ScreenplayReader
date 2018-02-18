@@ -61,19 +61,20 @@ class Scene(BaseModel):
     lines = models.ManyToManyField('Line')
 
 
-class CountedTitle(BaseModel, RawTitle):
+class ObjectTitle(BaseModel):
     class Meta:
         abstract = True
+    title = models.CharField(_("Title"), max_length=100)
     interpret_operation = models.ForeignKey('InterpretOperation', models.CASCADE)
     screenplay = models.ForeignKey('Screenplay', models.CASCADE)
     occurrences = models.PositiveIntegerField('Occurrences', db_index=True)
     lines = models.ManyToManyField('Line')
 
     def __str__(self):
-        return self.title
+        return self.title[0:25]
 
 
-class Location(CountedTitle):
+class Location(ObjectTitle):
     class Meta:
         verbose_name = _("Location")
         verbose_name_plural = _("Locations")
@@ -81,7 +82,7 @@ class Location(CountedTitle):
         default_related_name = 'locations'
 
 
-class Character(CountedTitle):
+class Character(ObjectTitle):
     class Meta:
         verbose_name = _("Character")
         verbose_name_plural = _("Characters")
