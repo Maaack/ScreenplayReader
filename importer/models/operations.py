@@ -142,12 +142,24 @@ class InterpretOperation(BaseModel):
         screenplay = self.get_screenplay()
         text_blocks = self.get_text_blocks_set().all()
         for text_block in text_blocks:
-            Line.objects.create(
+            line = Line.objects.create(
                 interpret_operation=self,
                 screenplay=screenplay,
                 index=text_block.index,
                 text=text_block.text
             )
+            if text_block.has_text_match(SettingRegexParser.get_type()):
+                location_text = text_block.get_group_match(SettingRegexParser.GROUP_LOCATION)
+                Location.objects.get_or_create(
+                    title=location_text,
+                    interpret_operation=self,
+                    screenplay=screenplay,
+                    occurrences=0
+                ).lines.add(line, False)
+
+            elif text_block.has_text_match(CharacterRegexParser.get_type()):
+                pass
+
 
     def interpret_title_page(self):
         screenplay = self.get_screenplay()
