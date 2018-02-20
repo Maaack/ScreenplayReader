@@ -81,8 +81,8 @@ class TitlePageSerializer(BaseModelSerializer):
 class SceneSerializer(BaseModelSerializer):
     class Meta:
         model = Scene
-        fields = ('id', 'created', 'updated', 'user', 'interpret_operation', 'screenplay', 'location', 'characters',
-                  'location_name', 'location_text', 'position', 'time', 'character_names', 'scene_text')
+        fields = ('id', 'created', 'updated', 'user', 'interpret_operation', 'screenplay', 'number', 'location',
+                  'characters', 'location_name', 'location_text', 'position', 'time', 'character_names', 'scene_text')
 
     location_name = serializers.SerializerMethodField()
     character_names = serializers.SerializerMethodField()

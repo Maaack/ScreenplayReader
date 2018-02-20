@@ -204,8 +204,10 @@ class InterpretOperation(BaseModel):
         screenplay = self.get_screenplay()
         setting_matches = self.get_text_match_setting_set().order_by('text_block__index')
         previous_index = 0
+        current_scene_number = 0
         previous_scene = None
         for setting_match in setting_matches:
+            current_scene_number += 1
             try:
                 location_index = setting_match.text_block.index
                 location_line = Line.objects.get(index=location_index)
@@ -220,6 +222,7 @@ class InterpretOperation(BaseModel):
             current_scene = Scene.objects.create(
                 interpret_operation=self,
                 screenplay=screenplay,
+                number=current_scene_number,
                 location=location
             )
             InterpretOperation.attach_location_to_scene(current_scene, setting_match)
