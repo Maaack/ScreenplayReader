@@ -56,8 +56,10 @@ class Scene(BaseModel):
 
     interpret_operation = models.ForeignKey('InterpretOperation', models.CASCADE)
     screenplay = models.ForeignKey('Screenplay', models.CASCADE)
-    location = models.ForeignKey('Location', models.CASCADE)
     characters = models.ManyToManyField('Character')
+    location = models.ForeignKey('Location', models.CASCADE)
+    position = models.CharField(_('Position'), max_length=25, blank=True, null=True)
+    time = models.CharField(_("Time"), max_length=25, blank=True, null=True)
     lines = models.ManyToManyField('Line')
 
 
