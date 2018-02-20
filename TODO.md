@@ -2,8 +2,9 @@
 Get the tool working from end-to-end. Import a screenplay and get the underlying structure.
 
 ## Next Sprint
-* Generate Times from location slugs
-* Add details to scene (ext./int., time)
+* Make Interpreter run on a per line level to identify characters/locations
+* Make slug tagger ignore character and location regex patterns
+* Bugfix: Incorrect locations being tied to scenes
 * Evaluate scene data from imports
 
 ## Backlog
