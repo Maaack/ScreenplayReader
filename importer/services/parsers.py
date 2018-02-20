@@ -78,6 +78,17 @@ class SlugRegexParser(RegexParser):
     def get_groups():
         return SlugRegexParser.GROUPS
 
+    @staticmethod
+    def validate_result(result):
+        full_text = result[0][1]
+        if re.search(r"((INT|EXT|EXT[/\\]INT|INT[/\\]EXT)\.+)", full_text):
+            return None
+        if re.search(r"(\(V\.O\.\)|\(O\.S\.\)|\(CONT'D\))", full_text):
+            return None
+        if not re.search(r"([a-z])", full_text):
+            return None
+        return RegexParser.validate_result(result)
+
 
 class SettingRegexParser(RegexParser):
     GROUP_POSITION = 1
