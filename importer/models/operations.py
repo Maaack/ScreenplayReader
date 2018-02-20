@@ -214,10 +214,6 @@ class InterpretOperation(BaseModel):
             except Line.MultipleObjectsReturned:
                 continue
             location = location_line.locations.first()
-            location_text = setting_match.group_matches.get(group_type='location').text
-            if location.title != location_text:
-                pass
-                # raise Exception('Location title does not match with group match text')
             current_index = location_line.index
             if previous_scene:
                 InterpretOperation.save_extras_to_scene(previous_scene, previous_index, current_index)
@@ -226,6 +222,7 @@ class InterpretOperation(BaseModel):
                 screenplay=screenplay,
                 location=location
             )
+            InterpretOperation.attach_location_to_scene(current_scene, setting_match)
             InterpretOperation.attach_position_to_scene(current_scene, setting_match)
             InterpretOperation.attach_time_to_scene(current_scene, setting_match)
             previous_index = current_index
