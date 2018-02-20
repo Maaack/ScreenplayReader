@@ -19,6 +19,16 @@ class TextBlock(BaseModel):
     def __str__(self):
         return self.text[0:25]
 
+    def get_text_match(self, text_match_type):
+        return self.text_matches.filter(match_type=text_match_type).first()
+
+    def has_text_match(self, text_match_type):
+        return bool(self.get_text_match(text_match_type))
+
+    def get_group_match_text(self, group_match_type):
+        return self.text_matches.filter(group_matches__group_type=group_match_type)\
+            .values('group_matches__text').first().text
+
 
 class TextMatch(BaseModel):
     class Meta:
@@ -44,6 +54,12 @@ class TextMatch(BaseModel):
 
     def __str__(self):
         return self.text[0:25]
+
+    def get_group_match(self, group_match_type):
+        return self.group_matches.filter(group_type=group_match_type).first()
+
+    def has_group_match(self, group_match_type):
+        return bool(self.get_group_match(group_match_type))
 
 
 class GroupMatch(BaseModel):
