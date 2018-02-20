@@ -56,6 +56,7 @@ class Scene(BaseModel):
 
     interpret_operation = models.ForeignKey('InterpretOperation', models.CASCADE)
     screenplay = models.ForeignKey('Screenplay', models.CASCADE)
+    number = models.PositiveIntegerField(_('Number'), db_index=True)
     characters = models.ManyToManyField('Character')
     location = models.ForeignKey('Location', models.CASCADE)
     location_text = models.CharField(_('Location Text'), max_length=25, blank=True, null=True)
