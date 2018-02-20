@@ -250,17 +250,23 @@ class InterpretOperation(BaseModel):
     @staticmethod
     def attach_time_to_scene(scene, setting_match):
         try:
-            time_text = setting_match.group_matches.get(group_type='time').text
+            scene.time = setting_match.group_matches.get(group_type='time').text
         except GroupMatch.DoesNotExist:
-            return
-        scene.time = time_text
+            pass
         return scene
 
     @staticmethod
     def attach_position_to_scene(scene, setting_match):
         try:
-            position_text = setting_match.group_matches.get(group_type='position').text
+            scene.position = setting_match.group_matches.get(group_type='position').text
         except GroupMatch.DoesNotExist:
-            return
-        scene.position = position_text
+            pass
+        return scene
+
+    @staticmethod
+    def attach_location_to_scene(scene, setting_match):
+        try:
+            scene.location_text = setting_match.group_matches.get(group_type='location').text
+        except GroupMatch.DoesNotExist:
+            pass
         return scene
