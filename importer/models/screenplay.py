@@ -58,6 +58,7 @@ class Scene(BaseModel):
     screenplay = models.ForeignKey('Screenplay', models.CASCADE)
     characters = models.ManyToManyField('Character')
     location = models.ForeignKey('Location', models.CASCADE)
+    location_text = models.CharField(_('Location Text'), max_length=25, blank=True, null=True)
     position = models.CharField(_('Position'), max_length=25, blank=True, null=True)
     time = models.CharField(_("Time"), max_length=25, blank=True, null=True)
     lines = models.ManyToManyField('Line')
