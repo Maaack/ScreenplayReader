@@ -50,7 +50,8 @@ class TextBlockSerializer(BaseModelSerializer):
 class TextMatchSerializer(BaseModelSerializer):
     class Meta:
         model = TextMatch
-        fields = ('id', 'created', 'updated', 'user', 'parse_operation', 'text_block', 'match_type', 'text')
+        fields = ('id', 'created', 'updated', 'user', 'parse_operation', 'text_block', 'match_type', 'text',
+                  'group_matches')
 
 
 class GroupMatchSerializer(BaseModelSerializer):
