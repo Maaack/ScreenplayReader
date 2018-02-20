@@ -171,10 +171,10 @@ class InterpretOperation(BaseModel):
 
     def interpret_locations(self):
         screenplay = self.get_screenplay()
-        settings_match = self.get_text_match_setting_set().filter(group_matches__group_type='location'). \
+        setting_matches = self.get_text_match_setting_set().filter(group_matches__group_type='location'). \
             values('group_matches__text').order_by('group_matches__text'). \
             annotate(occurrences=Count('group_matches__text')).order_by('-occurrences')
-        for setting_match in settings_match:
+        for setting_match in setting_matches:
             location = Location.objects.create(
                 interpret_operation=self,
                 screenplay=screenplay,
@@ -186,10 +186,10 @@ class InterpretOperation(BaseModel):
 
     def interpret_characters(self):
         screenplay = self.get_screenplay()
-        characters_match = self.get_text_match_character_set().filter(group_matches__group_type='full_title'). \
+        character_matches = self.get_text_match_character_set().filter(group_matches__group_type='full_title'). \
             values('group_matches__text').order_by('group_matches__text'). \
             annotate(occurrences=Count('group_matches__text')).order_by('-occurrences')
-        for character_match in characters_match:
+        for character_match in character_matches:
             character = Character.objects.create(
                 interpret_operation=self,
                 screenplay=screenplay,
@@ -201,12 +201,12 @@ class InterpretOperation(BaseModel):
 
     def interpret_scenes(self):
         screenplay = self.get_screenplay()
-        settings = self.get_text_match_setting_set().order_by('text_block__index')
+        setting_matches = self.get_text_match_setting_set().order_by('text_block__index')
         previous_index = 0
         previous_scene = None
-        for setting in settings.all():
+        for setting_match in setting_matches:
             try:
-                location_index = setting.text_block.index
+                location_index = setting_match.text_block.index
                 location_line = Line.objects.get(index=location_index)
             except Line.DoesNotExist:
                 continue
