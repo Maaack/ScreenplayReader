@@ -1,7 +1,8 @@
 from django.utils.translation import ugettext_lazy as _
 from django.db.models import Count
 
-from importer.models import BaseModel, TextBlock, TextMatch, Screenplay, Scene, TitlePage, Location, Character, Line
+from importer.models import BaseModel, TextBlock, TextMatch, GroupMatch, Screenplay, Scene, TitlePage, Location,\
+    Character, Line
 from importer.services.parsers import SettingRegexParser, \
     CharacterRegexParser, ActionDialogueRegexParser, SlugRegexParser
 from screenplayreader.mixins.models import *
@@ -221,6 +222,8 @@ class InterpretOperation(BaseModel):
                 screenplay=screenplay,
                 location=location
             )
+            InterpretOperation.attach_position_to_scene(current_scene, setting_match)
+            InterpretOperation.attach_time_to_scene(current_scene, setting_match)
             previous_index = current_index
             previous_scene = current_scene
 
@@ -239,3 +242,21 @@ class InterpretOperation(BaseModel):
         scene_characters = Character.objects.filter(lines__in=scene_lines).distinct()
         scene.characters.set(scene_characters)
         return scene.save()
+
+    @staticmethod
+    def attach_time_to_scene(scene, setting_match):
+        try:
+            time_text = setting_match.group_matches.get(group_type='time').text
+        except GroupMatch.DoesNotExist:
+            return
+        scene.time = time_text
+        return scene
+
+    @staticmethod
+    def attach_position_to_scene(scene, setting_match):
+        try:
+            position_text = setting_match.group_matches.get(group_type='position').text
+        except GroupMatch.DoesNotExist:
+            return
+        scene.position = position_text
+        return scene
