@@ -138,6 +138,8 @@ class CharacterRegexParser(RegexParser):
         full_title = result[0][1]
         if re.search(r"((INT|EXT|EXT[/\\]INT|INT[/\\]EXT)\.+)", honorific):
             return None
+        if re.search(r"(FADE (IN|OUT)\.+)", full_title):
+            return None
         if not re.search(r"(([^A-Za-z]*[A-Za-z][^A-Za-z]*){2,})", full_title):
             return None
         return RegexParser.validate_result(result)
