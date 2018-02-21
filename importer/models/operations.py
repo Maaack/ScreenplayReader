@@ -111,7 +111,7 @@ class InterpretOperation(BaseModel):
         return Screenplay.objects.filter(interpret_operation=self).first()
 
     def get_text_blocks_set(self):
-        return TextBlock.objects.filter(parse_operation=self.parse_operation)
+        return TextBlock.objects.filter(parse_operation=self.parse_operation).order_by('index')
 
     def get_text_match_set(self):
         return TextMatch.objects.filter(parse_operation=self.parse_operation)
