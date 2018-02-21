@@ -98,7 +98,7 @@ class InterpretOperation(BaseModel):
     def run_operation(self):
         if self.parse_operation:
             self.interpret_lines()
-            # self.interpret_title_page()
+            self.interpret_title_page()
             # self.interpret_scenes()
 
     def get_screenplay(self):
@@ -153,24 +153,26 @@ class InterpretOperation(BaseModel):
 
     def interpret_title_page(self):
         screenplay = self.get_screenplay()
-        first_setting = self.get_text_match_setting_set().order_by('text_block__index').first()
-        first_setting_index = min(first_setting.text_block.index, self.TITLE_PAGE_MAX_BLOCKS)
-        first_text_blocks = self.get_text_blocks_set().order_by('index')[0:first_setting_index]
+        first_lines = self.lines.order_by('index').all()[0:self.TITLE_PAGE_MAX_BLOCKS]
         title = None
-        for text_block in first_text_blocks:
-            text = text_block.text
-            if text != '' and text is not None:
+        title_page_lines = []
+        title_page_text = ''
+        for line in first_lines:
+            text = line.text
+            if title is None and text is not None and text != '':
                 title = text
+            if len(title_page_lines) and (line.characters.count() or line.locations.count()):
                 break
+            title_page_lines.append(line)
+            title_page_text += "\n" + text
 
-        text_query_set = first_text_blocks.values('text')
-        text = "\n".join([dict_a['text'] for dict_a in text_query_set])
-        TitlePage.objects.create(
+        title_page = TitlePage.objects.create(
             interpret_operation=self,
             screenplay=screenplay,
             raw_title=title,
-            raw_text=text,
+            raw_text=title_page_text,
         )
+        title_page.lines.set(title_page_lines)
 
     def interpret_scenes(self):
         screenplay = self.get_screenplay()
