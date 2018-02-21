@@ -83,7 +83,7 @@ class SceneSerializer(BaseModelSerializer):
     class Meta:
         model = Scene
         fields = ('id', 'created', 'updated', 'user', 'interpret_operation', 'screenplay', 'number', 'location',
-                  'characters', 'location_name', 'location_text', 'position', 'time', 'character_names', 'scene_text')
+                  'characters', 'location_name', 'position', 'time', 'character_names', 'scene_text')
 
     location_name = serializers.SerializerMethodField()
     character_names = serializers.SerializerMethodField()
@@ -103,11 +103,11 @@ class LocationSerializer(BaseModelSerializer):
     class Meta:
         model = Location
         fields = ('id', 'created', 'updated', 'user', 'interpret_operation', 'screenplay', 'title',
-                  'occurrences', 'lines')
+                  'lines')
 
 
 class CharacterSerializer(BaseModelSerializer):
     class Meta:
         model = Character
         fields = ('id', 'created', 'updated', 'user', 'interpret_operation', 'screenplay', 'title',
-                  'occurrences', 'lines')
+                  'lines')
