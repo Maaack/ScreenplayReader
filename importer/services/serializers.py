@@ -44,13 +44,13 @@ class InterpretOperationSerializer(BaseModelSerializer):
 class TextBlockSerializer(BaseModelSerializer):
     class Meta:
         model = TextBlock
-        fields = ('id', 'created', 'updated', 'user', 'parse_operation', 'index', 'text')
+        fields = ('id', 'created', 'updated', 'user', 'parse_operation', 'index', 'text', 'text_matches')
 
 
 class TextMatchSerializer(BaseModelSerializer):
     class Meta:
         model = TextMatch
-        fields = ('id', 'created', 'updated', 'user', 'parse_operation', 'text_block', 'match_type', 'text',
+        fields = ('id', 'created', 'updated', 'user', 'parse_operation', 'text_blocks', 'match_type', 'text',
                   'group_matches')
 
 
@@ -69,13 +69,14 @@ class ScreenplaySerializer(BaseModelSerializer):
 class LineSerializer(BaseModelSerializer):
     class Meta:
         model = Line
-        fields = ('id', 'created', 'updated', 'user', 'interpret_operation', 'screenplay', 'index', 'text')
+        fields = ('id', 'created', 'updated', 'user', 'interpret_operation', 'locations', 'characters',
+                  'screenplay', 'index', 'text')
 
 
 class TitlePageSerializer(BaseModelSerializer):
     class Meta:
         model = TitlePage
-        fields = ('id', 'created', 'updated', 'user', 'interpret_operation', 'screenplay', 'raw_text', 'text')
+        fields = ('id', 'created', 'updated', 'user', 'interpret_operation', 'screenplay', 'raw_text', 'text', 'lines')
 
 
 class SceneSerializer(BaseModelSerializer):
