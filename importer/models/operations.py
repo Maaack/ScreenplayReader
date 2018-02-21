@@ -50,13 +50,15 @@ class ParseOperation(BaseModel):
         text = text_block.text
         match = parser.parse(text)
         if match:
-            text_match = TextMatch.objects.create(
+            text_match, created = TextMatch.objects.get_or_create(
                 parse_operation=self,
-                text_block=text_block,
                 match_type=match_type,
                 text=text
             )
-            text_match.save_group_matches(match)
+            if created:
+                pass
+                text_match.save_group_matches(match)
+            text_match.text_blocks.add(text_block)
 
     def parse_text_blocks(self, parser_class):
         text_blocks = self.get_text_blocks()
@@ -96,8 +98,8 @@ class InterpretOperation(BaseModel):
     def run_operation(self):
         if self.parse_operation:
             self.interpret_lines()
-            self.interpret_title_page()
-            self.interpret_scenes()
+            # self.interpret_title_page()
+            # self.interpret_scenes()
 
     def get_screenplay(self):
         if Screenplay.objects.filter(interpret_operation=self).count() == 0:

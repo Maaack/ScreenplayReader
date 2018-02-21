@@ -42,16 +42,17 @@ class TextMatch(BaseModel):
         default_related_name = 'text_matches'
 
     parse_operation = models.ForeignKey('ParseOperation', models.CASCADE)
-    text_block = models.ForeignKey('TextBlock', models.CASCADE)
+    text_blocks = models.ManyToManyField('TextBlock')
     match_type = models.CharField(_('Type'), max_length=25, db_index=True)
     text = models.TextField(_('Text'))
 
     def save_group_matches(self, group_matches):
+        if self.group_matches.count() > 0:
+            return
         for group_match in group_matches:
             if group_match[1]:
-                GroupMatch.objects.create(
+                self.group_matches.create(
                     parse_operation=self.parse_operation,
-                    text_match=self,
                     group_type=group_match[0],
                     text=group_match[1]
                 )
