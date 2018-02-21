@@ -195,7 +195,6 @@ class InterpretOperation(BaseModel):
             title=type_text,
             interpret_operation=self,
             screenplay=screenplay,
-            occurrences=0
         )
         return new_object
 
