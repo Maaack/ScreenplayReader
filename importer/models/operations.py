@@ -90,9 +90,8 @@ class InterpretOperation(BaseModel):
     parse_operation = models.ForeignKey('ParseOperation', models.CASCADE)
 
     def save(self, *args, **kwargs):
-        result_object = super(InterpretOperation, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
         self.run_operation()
-        return result_object
 
     def run_operation(self):
         if self.parse_operation:
