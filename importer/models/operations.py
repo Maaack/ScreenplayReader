@@ -82,6 +82,8 @@ class ParseOperation(BaseModel):
 
 class InterpretOperation(BaseModel):
     TITLE_PAGE_MAX_BLOCKS = 40
+    current_scene_number = 0
+    current_scene = None
 
     class Meta:
         verbose_name = _('Interpret Op')
@@ -150,6 +152,8 @@ class InterpretOperation(BaseModel):
             line_object = self.interpret_text_block(text_block, screenplay)
             if line_object:
                 line_object.lines.add(line)
+            if self.current_scene:
+                self.current_scene.lines.add(line)
 
     def interpret_title_page(self):
         screenplay = self.get_screenplay()
@@ -247,10 +251,28 @@ class InterpretOperation(BaseModel):
 
     def interpret_text_block(self, text_block, screenplay):
         if text_block.has_text_match(SettingRegexParser.get_type()):
-            return self.get_location_from_text_block(text_block, screenplay)
+            location = self.get_location_from_text_block(text_block, screenplay)
+            self.get_scene_from_text_block(text_block, screenplay, location)
+            return location
         elif text_block.has_text_match(CharacterRegexParser.get_type()):
-            return self.get_character_from_text_block(text_block, screenplay)
+            character = self.get_character_from_text_block(text_block, screenplay)
+            if self.current_scene:
+                self.current_scene.characters.add(character)
+            return character
         return None
+
+    def get_scene_from_text_block(self, text_block, screenplay, location):
+        self.current_scene_number += 1
+        position_text = text_block.get_group_match_text('position')
+        time_text = text_block.get_group_match_text('time')
+        self.current_scene = Scene.objects.create(
+            interpret_operation=self,
+            screenplay=screenplay,
+            number=self.current_scene_number,
+            location=location,
+            position=position_text,
+            time=time_text
+        )
 
     def get_location_from_text_block(self, text_block, screenplay):
         return self.get_object_from_text_block(text_block, screenplay, 'location', Location)
