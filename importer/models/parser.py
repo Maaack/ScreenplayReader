@@ -26,8 +26,12 @@ class TextBlock(BaseModel):
         return bool(self.get_text_match(text_match_type))
 
     def get_group_match_text(self, group_match_type):
-        return self.text_matches.filter(group_matches__group_type=group_match_type)\
-            .values('group_matches__text').first().text
+        try:
+            return self.text_matches.filter(group_matches__group_type=group_match_type)\
+                .values('group_matches__text').first()['group_matches__text']
+        except TypeError:
+            pass
+        return None
 
 
 class TextMatch(BaseModel):
