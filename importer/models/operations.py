@@ -101,7 +101,6 @@ class InterpretOperation(BaseModel):
         if self.parse_operation:
             self.interpret_lines()
             self.interpret_title_page()
-            # self.interpret_scenes()
 
     def get_screenplay(self):
         if Screenplay.objects.filter(interpret_operation=self).count() == 0:
@@ -115,29 +114,10 @@ class InterpretOperation(BaseModel):
     def get_text_blocks_set(self):
         return TextBlock.objects.filter(parse_operation=self.parse_operation).order_by('index')
 
-    def get_text_match_set(self):
-        return TextMatch.objects.filter(parse_operation=self.parse_operation)
-
-    def get_text_match_setting_set(self):
-        return self.get_text_match_set().filter(match_type=SettingRegexParser.get_type())
-
-    def get_text_match_character_set(self):
-        return self.get_text_match_set().filter(match_type=CharacterRegexParser.get_type())
-
     def get_title_page(self):
         if self.title_pages.count() == 0:
             self.interpret_title_page()
         return self.title_pages.all()
-
-    def get_locations(self):
-        if self.locations.count() == 0:
-            self.interpret_locations()
-        return self.locations.all()
-
-    def get_characters(self):
-        if self.characters.count() == 0:
-            self.interpret_characters()
-        return self.characters.all()
 
     def interpret_lines(self):
         screenplay = self.get_screenplay()
@@ -177,77 +157,6 @@ class InterpretOperation(BaseModel):
             raw_text=title_page_text,
         )
         title_page.lines.set(title_page_lines)
-
-    def interpret_scenes(self):
-        screenplay = self.get_screenplay()
-        setting_matches = self.get_text_match_setting_set().order_by('text_block__index')
-        previous_index = 0
-        current_scene_number = 0
-        previous_scene = None
-        for setting_match in setting_matches:
-            current_scene_number += 1
-            try:
-                location_index = setting_match.text_block.index
-                location_line = Line.objects.get(index=location_index)
-            except Line.DoesNotExist:
-                continue
-            except Line.MultipleObjectsReturned:
-                continue
-            location = location_line.locations.first()
-            current_index = location_line.index
-            if previous_scene:
-                InterpretOperation.save_extras_to_scene(previous_scene, previous_index, current_index)
-            current_scene = Scene.objects.create(
-                interpret_operation=self,
-                screenplay=screenplay,
-                number=current_scene_number,
-                location=location
-            )
-            InterpretOperation.attach_location_to_scene(current_scene, setting_match)
-            InterpretOperation.attach_position_to_scene(current_scene, setting_match)
-            InterpretOperation.attach_time_to_scene(current_scene, setting_match)
-            previous_index = current_index
-            previous_scene = current_scene
-
-        if previous_scene:
-            last_text_match = self.get_text_match_setting_set().order_by('text_block__index').last()
-            try:
-                last_index = last_text_match.text_block.index
-            except AttributeError:
-                return None
-            InterpretOperation.save_extras_to_scene(previous_scene, previous_index, last_index)
-
-    @staticmethod
-    def save_extras_to_scene(scene, start_index, end_index):
-        scene_lines = Line.objects.filter(index__gte=start_index, index__lt=end_index).all()
-        scene.lines.set(scene_lines)
-        scene_characters = Character.objects.filter(lines__in=scene_lines).distinct()
-        scene.characters.set(scene_characters)
-        return scene.save()
-
-    @staticmethod
-    def attach_time_to_scene(scene, setting_match):
-        try:
-            scene.time = setting_match.group_matches.get(group_type='time').text
-        except GroupMatch.DoesNotExist:
-            pass
-        return scene
-
-    @staticmethod
-    def attach_position_to_scene(scene, setting_match):
-        try:
-            scene.position = setting_match.group_matches.get(group_type='position').text
-        except GroupMatch.DoesNotExist:
-            pass
-        return scene
-
-    @staticmethod
-    def attach_location_to_scene(scene, setting_match):
-        try:
-            scene.location_text = setting_match.group_matches.get(group_type='location').text
-        except GroupMatch.DoesNotExist:
-            pass
-        return scene
 
     def interpret_text_block(self, text_block, screenplay):
         if text_block.has_text_match(SettingRegexParser.get_type()):
