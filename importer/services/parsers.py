@@ -145,9 +145,8 @@ class CharacterRegexParser(RegexParser):
 
     @staticmethod
     def validate_result(result):
-        honorific = result[1][1]
         full_title = result[0][1]
-        if re.search(r"((INT|EXT|EXT[/\\]INT|INT[/\\]EXT)\.+)", honorific):
+        if re.search(r"((INT|EXT|EXT[/\\]INT|INT[/\\]EXT)\.+)", full_title):
             return None
         if re.search(r"(FADE (IN|OUT)\.+)", full_title):
             return None
