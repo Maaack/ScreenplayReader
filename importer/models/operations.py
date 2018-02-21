@@ -97,8 +97,6 @@ class InterpretOperation(BaseModel):
         if self.parse_operation:
             self.interpret_lines()
             self.interpret_title_page()
-            # self.interpret_locations()
-            # self.interpret_characters()
             self.interpret_scenes()
 
     def get_screenplay(self):
@@ -171,36 +169,6 @@ class InterpretOperation(BaseModel):
             raw_title=title,
             raw_text=text,
         )
-
-    def interpret_locations(self):
-        screenplay = self.get_screenplay()
-        setting_matches = self.get_text_match_setting_set().filter(group_matches__group_type='location'). \
-            values('group_matches__text').order_by('group_matches__text'). \
-            annotate(occurrences=Count('group_matches__text')).order_by('-occurrences')
-        for setting_match in setting_matches:
-            location = Location.objects.create(
-                interpret_operation=self,
-                screenplay=screenplay,
-                title=setting_match['group_matches__text'],
-                occurrences=setting_match['occurrences']
-            )
-            location.lines.set(Line.objects.filter(text__icontains=location.title))
-            location.save()
-
-    def interpret_characters(self):
-        screenplay = self.get_screenplay()
-        character_matches = self.get_text_match_character_set().filter(group_matches__group_type='full_title'). \
-            values('group_matches__text').order_by('group_matches__text'). \
-            annotate(occurrences=Count('group_matches__text')).order_by('-occurrences')
-        for character_match in character_matches:
-            character = Character.objects.create(
-                interpret_operation=self,
-                screenplay=screenplay,
-                title=character_match['group_matches__text'],
-                occurrences=character_match['occurrences']
-            )
-            character.lines.set(Line.objects.filter(text__icontains=character.title))
-            character.save()
 
     def interpret_scenes(self):
         screenplay = self.get_screenplay()
