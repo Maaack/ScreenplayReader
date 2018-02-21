@@ -282,3 +282,27 @@ class InterpretOperation(BaseModel):
         except GroupMatch.DoesNotExist:
             pass
         return scene
+
+    def interpret_text_block(self, text_block, screenplay):
+        if text_block.has_text_match(SettingRegexParser.get_type()):
+            return self.get_location_from_text_block(text_block, screenplay)
+        elif text_block.has_text_match(CharacterRegexParser.get_type()):
+            return self.get_character_from_text_block(text_block, screenplay)
+        return None
+
+    def get_location_from_text_block(self, text_block, screenplay):
+        return self.get_object_from_text_block(text_block, screenplay, 'location', Location)
+
+    def get_character_from_text_block(self, text_block, screenplay):
+        return self.get_object_from_text_block(text_block, screenplay, 'full_title', Character)
+
+    def get_object_from_text_block(self, text_block, screenplay, get_type, object_class):
+        type_text = text_block.get_group_match_text(get_type)
+        new_object, created = object_class.objects.get_or_create(
+            title=type_text,
+            interpret_operation=self,
+            screenplay=screenplay,
+            occurrences=0
+        )
+        return new_object
+
