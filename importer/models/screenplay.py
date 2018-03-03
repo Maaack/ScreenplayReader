@@ -51,7 +51,7 @@ class Scene(BaseModel):
     class Meta:
         verbose_name = _("Scene")
         verbose_name_plural = _("Scenes")
-        ordering = ["-created"]
+        ordering = ["created"]
         default_related_name = 'scenes'
 
     interpret_operation = models.ForeignKey('InterpretOperation', models.CASCADE)
@@ -80,7 +80,7 @@ class Location(ObjectTitle):
     class Meta:
         verbose_name = _("Location")
         verbose_name_plural = _("Locations")
-        ordering = ["-created"]
+        ordering = ["created"]
         default_related_name = 'locations'
 
 
@@ -88,5 +88,5 @@ class Character(ObjectTitle):
     class Meta:
         verbose_name = _("Character")
         verbose_name_plural = _("Characters")
-        ordering = ["-created"]
+        ordering = ["created"]
         default_related_name = 'characters'
