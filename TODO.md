@@ -2,8 +2,8 @@
 Get the tool working from end-to-end. Import a screenplay and get the underlying structure.
 
 ## Next Sprint
-* Generate Times from location slugs
-* Add details to scene (ext./int., time)
+* Start scene exporter with support for CSV
+* Add previous scene and next scene links to scene serializer
 * Evaluate scene data from imports
 
 ## Backlog
@@ -17,9 +17,9 @@ Get the tool working from end-to-end. Import a screenplay and get the underlying
 * Add support for uploading multiple file formats
 
 ### Parser
-* Refactor RegexParser to use static methods
 * Refactor ParseOperation to not be so complicated
 * Review splitting ParseResult out of ParseOperation
+* Refactor RegexParser to use static methods (I guess?)
 * Split into a separate app
 * Incorporate ML
 

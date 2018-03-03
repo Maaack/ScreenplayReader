@@ -1,7 +1,8 @@
 from django.utils.translation import ugettext_lazy as _
 from django.db.models import Count
 
-from importer.models import BaseModel, TextBlock, TextMatch, Screenplay, Scene, TitlePage, Location, Character, Line
+from importer.models import BaseModel, TextBlock, TextMatch, GroupMatch, Screenplay, Scene, TitlePage, Location,\
+    Character, Line
 from importer.services.parsers import SettingRegexParser, \
     CharacterRegexParser, ActionDialogueRegexParser, SlugRegexParser
 from screenplayreader.mixins.models import *
@@ -23,10 +24,10 @@ class ParseOperation(BaseModel):
 
     def run_operation(self):
         if self.imported_content:
-            self.parse_slugs()
+            # self.parse_slugs()
             self.parse_settings()
             self.parse_characters()
-            self.parse_action_dialogue()
+            # self.parse_action_dialogue()
 
     def get_text_blocks(self):
         if self.text_blocks.count() == 0:
@@ -49,13 +50,15 @@ class ParseOperation(BaseModel):
         text = text_block.text
         match = parser.parse(text)
         if match:
-            text_match = TextMatch.objects.create(
+            text_match, created = TextMatch.objects.get_or_create(
                 parse_operation=self,
-                text_block=text_block,
                 match_type=match_type,
                 text=text
             )
-            text_match.save_group_matches(match)
+            if created:
+                pass
+                text_match.save_group_matches(match)
+            text_match.text_blocks.add(text_block)
 
     def parse_text_blocks(self, parser_class):
         text_blocks = self.get_text_blocks()
@@ -79,6 +82,8 @@ class ParseOperation(BaseModel):
 
 class InterpretOperation(BaseModel):
     TITLE_PAGE_MAX_BLOCKS = 40
+    current_scene_number = 0
+    current_scene = None
 
     class Meta:
         verbose_name = _('Interpret Op')
@@ -89,17 +94,13 @@ class InterpretOperation(BaseModel):
     parse_operation = models.ForeignKey('ParseOperation', models.CASCADE)
 
     def save(self, *args, **kwargs):
-        result_object = super(InterpretOperation, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
         self.run_operation()
-        return result_object
 
     def run_operation(self):
         if self.parse_operation:
             self.interpret_lines()
             self.interpret_title_page()
-            self.interpret_locations()
-            self.interpret_characters()
-            self.interpret_scenes()
 
     def get_screenplay(self):
         if Screenplay.objects.filter(interpret_operation=self).count() == 0:
@@ -111,131 +112,89 @@ class InterpretOperation(BaseModel):
         return Screenplay.objects.filter(interpret_operation=self).first()
 
     def get_text_blocks_set(self):
-        return TextBlock.objects.filter(parse_operation=self.parse_operation)
-
-    def get_text_match_set(self):
-        return TextMatch.objects.filter(parse_operation=self.parse_operation)
-
-    def get_text_match_setting_set(self):
-        return self.get_text_match_set().filter(match_type=SettingRegexParser.get_type())
-
-    def get_text_match_character_set(self):
-        return self.get_text_match_set().filter(match_type=CharacterRegexParser.get_type())
+        return TextBlock.objects.filter(parse_operation=self.parse_operation).order_by('index')
 
     def get_title_page(self):
         if self.title_pages.count() == 0:
             self.interpret_title_page()
         return self.title_pages.all()
 
-    def get_locations(self):
-        if self.locations.count() == 0:
-            self.interpret_locations()
-        return self.locations.all()
-
-    def get_characters(self):
-        if self.characters.count() == 0:
-            self.interpret_characters()
-        return self.characters.all()
-
     def interpret_lines(self):
         screenplay = self.get_screenplay()
         text_blocks = self.get_text_blocks_set().all()
         for text_block in text_blocks:
-            Line.objects.create(
+            line = Line.objects.create(
                 interpret_operation=self,
                 screenplay=screenplay,
                 index=text_block.index,
                 text=text_block.text
             )
+            line_object = self.interpret_text_block(text_block, screenplay)
+            if line_object:
+                line_object.lines.add(line)
+            if self.current_scene:
+                self.current_scene.lines.add(line)
 
     def interpret_title_page(self):
         screenplay = self.get_screenplay()
-        first_setting = self.get_text_match_setting_set().order_by('text_block__index').first()
-        first_setting_index = min(first_setting.text_block.index, self.TITLE_PAGE_MAX_BLOCKS)
-        first_text_blocks = self.get_text_blocks_set().order_by('index')[0:first_setting_index]
+        first_lines = self.lines.order_by('index').all()[0:self.TITLE_PAGE_MAX_BLOCKS]
         title = None
-        for text_block in first_text_blocks:
-            text = text_block.text
-            if text != '' and text is not None:
+        title_page_lines = []
+        title_page_text = ''
+        for line in first_lines:
+            text = line.text
+            if title is None and text is not None and text != '':
                 title = text
+            if len(title_page_lines) and (line.characters.count() or line.locations.count()):
                 break
+            title_page_lines.append(line)
+            title_page_text += "\n" + text
 
-        text_query_set = first_text_blocks.values('text')
-        text = "\n".join([dict_a['text'] for dict_a in text_query_set])
-        TitlePage.objects.create(
+        title_page = TitlePage.objects.create(
             interpret_operation=self,
             screenplay=screenplay,
             raw_title=title,
-            raw_text=text,
+            raw_text=title_page_text,
+        )
+        title_page.lines.set(title_page_lines)
+
+    def interpret_text_block(self, text_block, screenplay):
+        if text_block.has_text_match(SettingRegexParser.get_type()):
+            location = self.get_location_from_text_block(text_block, screenplay)
+            self.get_scene_from_text_block(text_block, screenplay, location)
+            return location
+        elif text_block.has_text_match(CharacterRegexParser.get_type()):
+            character = self.get_character_from_text_block(text_block, screenplay)
+            if self.current_scene:
+                self.current_scene.characters.add(character)
+            return character
+        return None
+
+    def get_scene_from_text_block(self, text_block, screenplay, location):
+        self.current_scene_number += 1
+        position_text = text_block.get_group_match_text('position')
+        time_text = text_block.get_group_match_text('time')
+        self.current_scene = Scene.objects.create(
+            interpret_operation=self,
+            screenplay=screenplay,
+            number=self.current_scene_number,
+            location=location,
+            position=position_text,
+            time=time_text
         )
 
-    def interpret_locations(self):
-        screenplay = self.get_screenplay()
-        settings_match = self.get_text_match_setting_set().filter(group_matches__group_type='location'). \
-            values('group_matches__text').order_by('group_matches__text'). \
-            annotate(occurrences=Count('group_matches__text')).order_by('-occurrences')
-        for setting_match in settings_match:
-            location = Location.objects.create(
-                interpret_operation=self,
-                screenplay=screenplay,
-                title=setting_match['group_matches__text'],
-                occurrences=setting_match['occurrences']
-            )
-            location.lines.set(Line.objects.filter(text__icontains=location.title))
-            location.save()
+    def get_location_from_text_block(self, text_block, screenplay):
+        return self.get_object_from_text_block(text_block, screenplay, 'location', Location)
 
-    def interpret_characters(self):
-        screenplay = self.get_screenplay()
-        characters_match = self.get_text_match_character_set().filter(group_matches__group_type='full_title'). \
-            values('group_matches__text').order_by('group_matches__text'). \
-            annotate(occurrences=Count('group_matches__text')).order_by('-occurrences')
-        for character_match in characters_match:
-            character = Character.objects.create(
-                interpret_operation=self,
-                screenplay=screenplay,
-                title=character_match['group_matches__text'],
-                occurrences=character_match['occurrences']
-            )
-            character.lines.set(Line.objects.filter(text__icontains=character.title))
-            character.save()
+    def get_character_from_text_block(self, text_block, screenplay):
+        return self.get_object_from_text_block(text_block, screenplay, 'full_title', Character)
 
-    def interpret_scenes(self):
-        screenplay = self.get_screenplay()
-        settings = self.get_text_match_setting_set().order_by('text_block__index')
-        previous_index = 0
-        previous_scene = None
-        for setting in settings.all():
-            try:
-                location_index = setting.text_block.index
-                location_line = Line.objects.get(index=location_index)
-            except Line.DoesNotExist:
-                continue
-            except Line.MultipleObjectsReturned:
-                continue
-            location = location_line.locations.first()
-            current_index = location_line.index
-            if previous_scene:
-                InterpretOperation.save_extras_to_scene(previous_scene, previous_index, current_index)
-            current_scene = Scene.objects.create(
-                interpret_operation=self,
-                screenplay=screenplay,
-                location=location
-            )
-            previous_index = current_index
-            previous_scene = current_scene
+    def get_object_from_text_block(self, text_block, screenplay, get_type, object_class):
+        type_text = text_block.get_group_match_text(get_type)
+        new_object, created = object_class.objects.get_or_create(
+            title=type_text,
+            interpret_operation=self,
+            screenplay=screenplay,
+        )
+        return new_object
 
-        if previous_scene:
-            last_text_match = self.get_text_match_setting_set().order_by('text_block__index').last()
-            try:
-                last_index = last_text_match.text_block.index
-            except AttributeError:
-                return None
-            InterpretOperation.save_extras_to_scene(previous_scene, previous_index, last_index)
-
-    @staticmethod
-    def save_extras_to_scene(scene, start_index, end_index):
-        scene_lines = Line.objects.filter(index__gte=start_index, index__lt=end_index).all()
-        scene.lines.set(scene_lines)
-        scene_characters = Character.objects.filter(lines__in=scene_lines).distinct()
-        scene.characters.set(scene_characters)
-        return scene.save()

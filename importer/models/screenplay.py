@@ -56,8 +56,11 @@ class Scene(BaseModel):
 
     interpret_operation = models.ForeignKey('InterpretOperation', models.CASCADE)
     screenplay = models.ForeignKey('Screenplay', models.CASCADE)
-    location = models.ForeignKey('Location', models.CASCADE)
+    number = models.PositiveIntegerField(_('Number'), db_index=True)
     characters = models.ManyToManyField('Character')
+    location = models.ForeignKey('Location', models.CASCADE)
+    position = models.CharField(_('Position'), max_length=25, blank=True, null=True)
+    time = models.CharField(_("Time"), max_length=25, blank=True, null=True)
     lines = models.ManyToManyField('Line')
 
 
@@ -67,7 +70,6 @@ class ObjectTitle(BaseModel):
     title = models.CharField(_("Title"), max_length=100)
     interpret_operation = models.ForeignKey('InterpretOperation', models.CASCADE)
     screenplay = models.ForeignKey('Screenplay', models.CASCADE)
-    occurrences = models.PositiveIntegerField('Occurrences', db_index=True)
     lines = models.ManyToManyField('Line')
 
     def __str__(self):
