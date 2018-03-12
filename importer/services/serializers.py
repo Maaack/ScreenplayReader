@@ -1,9 +1,8 @@
 from rest_framework import serializers
-from importer.models import ImportedContent, TextMatch, GroupMatch, TextBlock, ParseOperation, InterpretOperation, Screenplay, \
-    TitlePage, Location, Character, Scene, Line
+from importer.models import *
 
 
-class BaseModelSerializer(serializers.HyperlinkedModelSerializer):
+class TimeStampedOwnableMixinSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         abstract = True
         fields = ('id', 'created', 'updated', 'user')
@@ -23,63 +22,63 @@ class RawTextSerializer(serializers.ModelSerializer):
         fields = ('id', 'raw_text', 'text')
 
 
-class ImportedContentSerializer(BaseModelSerializer):
+class ImportedContentSerializer(TimeStampedOwnableMixinSerializer):
     class Meta:
         model = ImportedContent
         fields = ('id', 'created', 'updated', 'user', 'raw_text', 'text')
 
 
-class ParseOperationSerializer(BaseModelSerializer):
+class ParseOperationSerializer(TimeStampedOwnableMixinSerializer):
     class Meta:
         model = ParseOperation
         fields = ('id', 'created', 'updated', 'user', 'imported_content')
 
 
-class InterpretOperationSerializer(BaseModelSerializer):
+class InterpretOperationSerializer(TimeStampedOwnableMixinSerializer):
     class Meta:
         model = InterpretOperation
         fields = ('id', 'created', 'updated', 'user', 'parse_operation')
 
 
-class TextBlockSerializer(BaseModelSerializer):
+class TextBlockSerializer(TimeStampedOwnableMixinSerializer):
     class Meta:
         model = TextBlock
         fields = ('id', 'created', 'updated', 'user', 'parse_operation', 'index', 'text', 'text_matches')
 
 
-class TextMatchSerializer(BaseModelSerializer):
+class TextMatchSerializer(TimeStampedOwnableMixinSerializer):
     class Meta:
         model = TextMatch
         fields = ('id', 'created', 'updated', 'user', 'parse_operation', 'text_blocks', 'match_type', 'text',
                   'group_matches')
 
 
-class GroupMatchSerializer(BaseModelSerializer):
+class GroupMatchSerializer(TimeStampedOwnableMixinSerializer):
     class Meta:
         model = GroupMatch
         fields = ('id', 'created', 'updated', 'user', 'parse_operation', 'text_match', 'group_type', 'text')
 
 
-class ScreenplaySerializer(BaseModelSerializer):
+class ScreenplaySerializer(TimeStampedOwnableMixinSerializer):
     class Meta:
         model = Screenplay
         fields = ('id', 'created', 'updated', 'user', 'interpret_operation')
 
 
-class LineSerializer(BaseModelSerializer):
+class LineSerializer(TimeStampedOwnableMixinSerializer):
     class Meta:
         model = Line
         fields = ('id', 'created', 'updated', 'user', 'interpret_operation', 'locations', 'characters',
                   'screenplay', 'index', 'text')
 
 
-class TitlePageSerializer(BaseModelSerializer):
+class TitlePageSerializer(TimeStampedOwnableMixinSerializer):
     class Meta:
         model = TitlePage
         fields = ('id', 'created', 'updated', 'user', 'interpret_operation', 'screenplay', 'raw_text', 'text', 'lines')
 
 
-class SceneSerializer(BaseModelSerializer):
+class SceneSerializer(TimeStampedOwnableMixinSerializer):
     class Meta:
         model = Scene
         fields = ('id', 'created', 'updated', 'user', 'interpret_operation', 'screenplay', 'number', 'location',
@@ -99,14 +98,14 @@ class SceneSerializer(BaseModelSerializer):
         return [line['text'] for line in scene.lines.values('text')]
 
 
-class LocationSerializer(BaseModelSerializer):
+class LocationSerializer(TimeStampedOwnableMixinSerializer):
     class Meta:
         model = Location
         fields = ('id', 'created', 'updated', 'user', 'interpret_operation', 'screenplay', 'title',
                   'lines')
 
 
-class CharacterSerializer(BaseModelSerializer):
+class CharacterSerializer(TimeStampedOwnableMixinSerializer):
     class Meta:
         model = Character
         fields = ('id', 'created', 'updated', 'user', 'interpret_operation', 'screenplay', 'title',
