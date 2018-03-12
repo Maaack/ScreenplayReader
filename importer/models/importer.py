@@ -1,14 +1,8 @@
 from django.utils.translation import ugettext_lazy as _
-
 from screenplayreader.mixins.models import *
 
 
-class BaseModel(TimeStamped, Ownable):
-    class Meta:
-        abstract = True
-
-
-class Import(BaseModel):
+class Import(TimeStampedOwnable):
     class Meta:
         verbose_name = _('Import')
         verbose_name_plural = _('Imports')
@@ -18,7 +12,7 @@ class Import(BaseModel):
     file = models.FileField(_("Uploaded File"), upload_to="imports/%Y/%m/%d/")
 
 
-class ImportedContent(BaseModel, RawText):
+class ImportedContent(TimeStampedOwnable, RawText):
     class Meta:
         verbose_name = _('Imported Content')
         verbose_name_plural = _('Imported Contents')
@@ -27,7 +21,7 @@ class ImportedContent(BaseModel, RawText):
 
 
 # TODO: Delete or use this
-class TextFormat(BaseModel):
+class TextFormat(TimeStampedOwnable):
     class Meta:
         verbose_name = _('Format')
         verbose_name_plural = _('Formats')
@@ -47,7 +41,7 @@ class TextFormat(BaseModel):
 
 
 # TODO: Delete or use this
-class ElementFormat(BaseModel):
+class ElementFormat(TimeStampedOwnable):
     class Meta:
         verbose_name = _("Element Format")
         verbose_name_plural = _("Element Formats")
