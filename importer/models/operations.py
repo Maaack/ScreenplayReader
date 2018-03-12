@@ -8,7 +8,7 @@ from importer.services.parsers import SettingRegexParser, \
 from screenplayreader.mixins.models import *
 
 
-class ParseOperation(TimeStampedOwnable):
+class ParseOperation(GenericOperation):
     class Meta:
         verbose_name = _('Parse Op')
         verbose_name_plural = _('Parse Ops')
@@ -80,7 +80,7 @@ class ParseOperation(TimeStampedOwnable):
         self.parse_text_blocks(ActionDialogueRegexParser)
 
 
-class InterpretOperation(TimeStampedOwnable):
+class InterpretOperation(GenericOperation):
     TITLE_PAGE_MAX_BLOCKS = 40
     current_scene_number = 0
     current_scene = None
