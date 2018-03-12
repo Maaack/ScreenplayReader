@@ -1,9 +1,8 @@
 from django.utils.translation import ugettext_lazy as _
+from screenplayreader.mixins.models import *
 
-from .importer import BaseModel, RawText, RawTitle, models
 
-
-class Screenplay(BaseModel, RawText):
+class Screenplay(TimeStampedOwnable, RawText):
     class Meta:
         verbose_name = _('Screenplay')
         verbose_name_plural = _('Screenplays')
@@ -16,7 +15,7 @@ class Screenplay(BaseModel, RawText):
         return self.text[:25]
 
 
-class Line(BaseModel):
+class Line(TimeStampedOwnable):
     class Meta:
         verbose_name = _('Line')
         verbose_name_plural = _('Lines')
@@ -32,7 +31,7 @@ class Line(BaseModel):
         return self.text[0:25]
 
 
-class TitlePage(BaseModel, RawTitle, RawText):
+class TitlePage(TimeStampedOwnable, RawTitle, RawText):
     class Meta:
         verbose_name = _("Title Page")
         verbose_name_plural = _("Title Pages")
@@ -47,7 +46,7 @@ class TitlePage(BaseModel, RawTitle, RawText):
         return self.title
 
 
-class Scene(BaseModel):
+class Scene(TimeStampedOwnable):
     class Meta:
         verbose_name = _("Scene")
         verbose_name_plural = _("Scenes")
@@ -64,7 +63,7 @@ class Scene(BaseModel):
     lines = models.ManyToManyField('Line')
 
 
-class ObjectTitle(BaseModel):
+class ObjectTitle(TimeStampedOwnable):
     class Meta:
         abstract = True
     title = models.CharField(_("Title"), max_length=100)

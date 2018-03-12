@@ -1,14 +1,14 @@
 from django.utils.translation import ugettext_lazy as _
 from django.db.models import Count
 
-from importer.models import BaseModel, TextBlock, TextMatch, GroupMatch, Screenplay, Scene, TitlePage, Location,\
+from importer.models import TextBlock, TextMatch, GroupMatch, Screenplay, Scene, TitlePage, Location,\
     Character, Line
 from importer.services.parsers import SettingRegexParser, \
     CharacterRegexParser, ActionDialogueRegexParser, SlugRegexParser
 from screenplayreader.mixins.models import *
 
 
-class ParseOperation(BaseModel):
+class ParseOperation(TimeStampedOwnable):
     class Meta:
         verbose_name = _('Parse Op')
         verbose_name_plural = _('Parse Ops')
@@ -80,7 +80,7 @@ class ParseOperation(BaseModel):
         self.parse_text_blocks(ActionDialogueRegexParser)
 
 
-class InterpretOperation(BaseModel):
+class InterpretOperation(TimeStampedOwnable):
     TITLE_PAGE_MAX_BLOCKS = 40
     current_scene_number = 0
     current_scene = None
