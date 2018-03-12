@@ -67,3 +67,8 @@ class RawText(models.Model):
         self.snippet = self.text[:25]
         return super(RawText, self).save(*args, **kwargs)
 
+
+class TimeStampedOwnable(TimeStamped, Ownable):
+    class Meta:
+        abstract = True
+
