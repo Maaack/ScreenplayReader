@@ -114,7 +114,7 @@ Django-based site with REST API framework
 [4.1]: http://localhost:8000/exporter/screenplays/
 [4.2]: http://localhost:8000/exporter/screenplays/{:pk}/basics-csv
 [4.3]: http://localhost:8000/exporter/screenplays/{:pk}/character-csv
-[10]: https://docs.djangoproject.com/en/2/intro/tutorial01/
+[10]: https://docs.djangoproject.com/en/2.0/intro/tutorial01/
 [11]: http://www.django-rest-framework.org/
 [12]: http://www.restapitutorial.com/lessons/restquicktips.html
 [13]: https://github.com/RestCheatSheet/api-cheat-sheet#api-design-cheat-sheet
