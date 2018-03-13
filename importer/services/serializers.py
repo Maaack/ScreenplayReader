@@ -1,88 +1,75 @@
 from rest_framework import serializers
 from importer.models import *
 
-
-class TimeStampedOwnableMixinSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        abstract = True
-        fields = ('id', 'created', 'updated', 'user')
-
-    user = serializers.ReadOnlyField(source='user.username')
-
-
-class RawTitleSerializer(serializers.ModelSerializer):
-    class Meta:
-        abstract = True
-        fields = ('id', 'raw_title', 'title')
+FIELDS_LIST_ID = ('id', )
+FIELDS_LIST_TIMESTAMPED_OWNABLE = ('created', 'updated', 'user')
+FIELDS_LIST_COMMON_OBJECT = FIELDS_LIST_ID + FIELDS_LIST_TIMESTAMPED_OWNABLE
+FIELDS_LIST_GENERIC_OPERATION = FIELDS_LIST_COMMON_OBJECT + ('started', 'ended', 'running', 'milliseconds')
+FIELDS_LIST_RAW_TITLE = ('raw_title', 'title')
+FIELDS_LIST_RAW_TEXT = ('raw_text', 'text')
+FIELDS_LIST_PARSE_OP_REL = FIELDS_LIST_COMMON_OBJECT + ('parse_operation', )
+FIELDS_LIST_INTERPRET_OP_REL = FIELDS_LIST_COMMON_OBJECT + ('interpret_operation', )
 
 
-class RawTextSerializer(serializers.ModelSerializer):
-    class Meta:
-        abstract = True
-        fields = ('id', 'raw_text', 'text')
-
-
-class ImportedContentSerializer(TimeStampedOwnableMixinSerializer):
+class ImportedContentSerializer(serializers.ModelSerializer):
     class Meta:
         model = ImportedContent
-        fields = ('id', 'created', 'updated', 'user', 'raw_text', 'text')
+        fields = FIELDS_LIST_COMMON_OBJECT + FIELDS_LIST_RAW_TEXT
 
 
-class ParseOperationSerializer(TimeStampedOwnableMixinSerializer):
+class ParseOperationSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = ParseOperation
-        fields = ('id', 'created', 'updated', 'user', 'imported_content')
+        fields = FIELDS_LIST_COMMON_OBJECT + ('imported_content', )
 
 
-class InterpretOperationSerializer(TimeStampedOwnableMixinSerializer):
+class InterpretOperationSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = InterpretOperation
-        fields = ('id', 'created', 'updated', 'user', 'parse_operation')
+        fields = FIELDS_LIST_PARSE_OP_REL
 
 
-class TextBlockSerializer(TimeStampedOwnableMixinSerializer):
+class TextBlockSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = TextBlock
-        fields = ('id', 'created', 'updated', 'user', 'parse_operation', 'index', 'text', 'text_matches')
+        fields = FIELDS_LIST_PARSE_OP_REL + ('index', 'text', 'text_matches')
 
 
-class TextMatchSerializer(TimeStampedOwnableMixinSerializer):
+class TextMatchSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = TextMatch
-        fields = ('id', 'created', 'updated', 'user', 'parse_operation', 'text_blocks', 'match_type', 'text',
-                  'group_matches')
+        fields = FIELDS_LIST_PARSE_OP_REL + ('text_blocks', 'match_type', 'text', 'group_matches')
 
 
-class GroupMatchSerializer(TimeStampedOwnableMixinSerializer):
+class GroupMatchSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = GroupMatch
-        fields = ('id', 'created', 'updated', 'user', 'parse_operation', 'text_match', 'group_type', 'text')
+        fields = FIELDS_LIST_PARSE_OP_REL + ('text_match', 'group_type', 'text')
 
 
-class ScreenplaySerializer(TimeStampedOwnableMixinSerializer):
+class ScreenplaySerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Screenplay
-        fields = ('id', 'created', 'updated', 'user', 'interpret_operation')
+        fields = FIELDS_LIST_INTERPRET_OP_REL
 
 
-class LineSerializer(TimeStampedOwnableMixinSerializer):
+class LineSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Line
-        fields = ('id', 'created', 'updated', 'user', 'interpret_operation', 'locations', 'characters',
-                  'screenplay', 'index', 'text')
+        fields = FIELDS_LIST_INTERPRET_OP_REL + ('locations', 'characters', 'screenplay', 'index', 'text')
 
 
-class TitlePageSerializer(TimeStampedOwnableMixinSerializer):
+class TitlePageSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = TitlePage
-        fields = ('id', 'created', 'updated', 'user', 'interpret_operation', 'screenplay', 'raw_text', 'text', 'lines')
+        fields = FIELDS_LIST_INTERPRET_OP_REL + ('screenplay', 'raw_text', 'text', 'lines')
 
 
-class SceneSerializer(TimeStampedOwnableMixinSerializer):
+class SceneSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Scene
-        fields = ('id', 'created', 'updated', 'user', 'interpret_operation', 'screenplay', 'number', 'location',
-                  'characters', 'location_name', 'position', 'time', 'character_names', 'scene_text')
+        fields = FIELDS_LIST_INTERPRET_OP_REL + ('screenplay', 'number', 'location', 'characters', 'location_name',
+                                                 'position', 'time', 'character_names', 'scene_text')
 
     location_name = serializers.SerializerMethodField()
     character_names = serializers.SerializerMethodField()
@@ -98,15 +85,13 @@ class SceneSerializer(TimeStampedOwnableMixinSerializer):
         return [line['text'] for line in scene.lines.values('text')]
 
 
-class LocationSerializer(TimeStampedOwnableMixinSerializer):
+class LocationSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Location
-        fields = ('id', 'created', 'updated', 'user', 'interpret_operation', 'screenplay', 'title',
-                  'lines')
+        fields = FIELDS_LIST_INTERPRET_OP_REL + ('screenplay', 'title', 'lines')
 
 
-class CharacterSerializer(TimeStampedOwnableMixinSerializer):
+class CharacterSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Character
-        fields = ('id', 'created', 'updated', 'user', 'interpret_operation', 'screenplay', 'title',
-                  'lines')
+        fields = FIELDS_LIST_INTERPRET_OP_REL + ('screenplay', 'title', 'lines')
