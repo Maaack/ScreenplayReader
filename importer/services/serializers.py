@@ -28,13 +28,13 @@ class ImportedContentSerializer(serializers.ModelSerializer):
 class ParseOperationSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = ParseOperation
-        fields = FIELDS_LIST_COMMON_OBJECT + ('imported_content', )
+        fields = FIELDS_LIST_GENERIC_OPERATION + ('imported_content', )
 
 
 class InterpretOperationSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = InterpretOperation
-        fields = FIELDS_LIST_PARSE_OP_REL
+        fields = FIELDS_LIST_GENERIC_OPERATION + ('parse_operation', )
 
 
 class TextBlockSerializer(serializers.HyperlinkedModelSerializer):
