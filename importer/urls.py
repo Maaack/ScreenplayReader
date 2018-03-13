@@ -1,5 +1,3 @@
-from django.urls import path
-from django.conf.urls import include
 from importer import views
 from rest_framework import routers
 
@@ -17,6 +15,4 @@ router.register(r'scenes', views.SceneViewSet)
 router.register(r'locations', views.LocationViewSet)
 router.register(r'characters', views.CharacterViewSet)
 
-urlpatterns = [
-    path('', include(router.urls)),
-]
+urlpatterns = router.urls

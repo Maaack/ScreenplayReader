@@ -2,11 +2,14 @@
 Get the tool working from end-to-end. Import a screenplay and get the underlying structure.
 
 ## Next Sprint
-* Start scene exporter with support for CSV
-* Add previous scene and next scene links to scene serializer
-* Evaluate scene data from imports
+* Split Interpreter to separate app
+* Split Parser into separate app
+* Add general tags to use on text
 
 ## Backlog
+* Evaluate including django-taggit
+* Add previous scene and next scene links to scene serializer
+* Evaluate scene data from imports
 * Import 100 screenplays from the public domain
 * Catalog common slug usages
 * Add custom manager for TextBlock to exclude empty string

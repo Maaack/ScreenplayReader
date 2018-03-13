@@ -1,8 +1,7 @@
-from django.urls import path
 from . import views
+from rest_framework import routers
 
-urlpatterns = [
-    path('', views.csv_preview, name='preview'),
-    path('<int:screenplay_id>/', views.csv_export, name='detail'),
-    path('<int:screenplay_id>/characters', views.csv_export_character_breakout, name='character'),
-]
+router = routers.DefaultRouter()
+router.register(r'screenplays', views.ScreenplayViewSet)
+
+urlpatterns = router.urls
