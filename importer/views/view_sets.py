@@ -1,7 +1,7 @@
-from rest_framework.response import Response
 from rest_framework.decorators import detail_route
+from rest_framework.response import Response
 
-from importer.services.serializers import *
+from .serializers import *
 from screenplayreader.mixins.views import BaseViewSet
 
 
