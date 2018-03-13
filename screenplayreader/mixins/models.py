@@ -67,3 +67,39 @@ class RawText(models.Model):
         self.snippet = self.text[:25]
         return super(RawText, self).save(*args, **kwargs)
 
+
+class TimeStampedOwnable(TimeStamped, Ownable):
+    class Meta:
+        abstract = True
+
+
+class GenericOperation(TimeStampedOwnable):
+    class Meta:
+        abstract = True
+
+    started = models.DateTimeField(_("Start Time"), null=True, editable=False)
+    ended = models.DateTimeField(_("End Time"), null=True, editable=False)
+    running = models.BooleanField(_("Running"), default=False, editable=False)
+    milliseconds = models.FloatField(_("Runtime in milliseconds"), null=True, editable=False)
+
+    def start_op(self):
+        self.started = now()
+        self.running = True
+        self.ended = None
+        self.milliseconds = 0
+        self.save()
+
+    def end_op(self):
+        self.running = False
+        self.ended = now()
+        time_diff = self.ended - self.started
+        self.milliseconds = time_diff.total_seconds() * 1000
+        self.save()
+
+    def run_operation(self):
+        self.start_op()
+        self.operation()
+        self.end_op()
+
+    def operation(self):
+        pass

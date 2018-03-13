@@ -1,10 +1,8 @@
-from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from screenplayreader.mixins.models import *
 
-from importer.models import BaseModel
 
-
-class TextBlock(BaseModel):
+class TextBlock(TimeStampedOwnable):
     class Meta:
         verbose_name = _('Text Block')
         verbose_name_plural = _('Text Blocks')
@@ -34,7 +32,7 @@ class TextBlock(BaseModel):
         return None
 
 
-class TextMatch(BaseModel):
+class TextMatch(TimeStampedOwnable):
     class Meta:
         verbose_name = _('Text Match')
         verbose_name_plural = _('Text Matches')
@@ -67,7 +65,7 @@ class TextMatch(BaseModel):
         return bool(self.get_group_match(group_match_type))
 
 
-class GroupMatch(BaseModel):
+class GroupMatch(TimeStampedOwnable):
     class Meta:
         verbose_name = _('Group Match')
         verbose_name_plural = _('Group Matches')

@@ -1,4 +1,5 @@
-# Create your views here.
+from rest_framework.response import Response
+from rest_framework.decorators import detail_route
 
 from importer.services.serializers import *
 from screenplayreader.mixins.views import BaseViewSet
@@ -10,12 +11,23 @@ class ImportedContentViewSet(BaseViewSet):
     serializer_class = ImportedContentSerializer
 
 
-class ParseOperationViewSet(BaseViewSet):
+class OperationViewSet(BaseViewSet):
+    class Meta:
+        abstract = True
+
+    @detail_route(methods=['post'],  url_path='run-operation')
+    def run_operation(self, request, pk = None):
+        operation = self.get_object()
+        operation.run_operation()
+        return Response('Operation complete!')
+
+
+class ParseOperationViewSet(OperationViewSet):
     queryset = ParseOperation.objects.all()
     serializer_class = ParseOperationSerializer
 
 
-class InterpretOperationViewSet(BaseViewSet):
+class InterpretOperationViewSet(OperationViewSet):
     queryset = InterpretOperation.objects.all()
     serializer_class = InterpretOperationSerializer
 

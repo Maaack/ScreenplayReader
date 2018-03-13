@@ -1,14 +1,14 @@
 from django.utils.translation import ugettext_lazy as _
 from django.db.models import Count
 
-from importer.models import BaseModel, TextBlock, TextMatch, GroupMatch, Screenplay, Scene, TitlePage, Location,\
+from importer.models import TextBlock, TextMatch, GroupMatch, Screenplay, Scene, TitlePage, Location,\
     Character, Line
 from importer.services.parsers import SettingRegexParser, \
     CharacterRegexParser, ActionDialogueRegexParser, SlugRegexParser
 from screenplayreader.mixins.models import *
 
 
-class ParseOperation(BaseModel):
+class ParseOperation(GenericOperation):
     class Meta:
         verbose_name = _('Parse Op')
         verbose_name_plural = _('Parse Ops')
@@ -17,12 +17,10 @@ class ParseOperation(BaseModel):
 
     imported_content = models.ForeignKey('ImportedContent', models.CASCADE)
 
-    def save(self, *args, **kwargs):
-        result_object = super(ParseOperation, self).save(*args, **kwargs)
-        self.run_operation()
-        return result_object
+    def __str__(self):
+        return str(self.imported_content)
 
-    def run_operation(self):
+    def operation(self):
         if self.imported_content:
             # self.parse_slugs()
             self.parse_settings()
@@ -80,7 +78,7 @@ class ParseOperation(BaseModel):
         self.parse_text_blocks(ActionDialogueRegexParser)
 
 
-class InterpretOperation(BaseModel):
+class InterpretOperation(GenericOperation):
     TITLE_PAGE_MAX_BLOCKS = 40
     current_scene_number = 0
     current_scene = None
@@ -93,11 +91,10 @@ class InterpretOperation(BaseModel):
 
     parse_operation = models.ForeignKey('ParseOperation', models.CASCADE)
 
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-        self.run_operation()
+    def __str__(self):
+        return str(self.parse_operation)
 
-    def run_operation(self):
+    def operation(self):
         if self.parse_operation:
             self.interpret_lines()
             self.interpret_title_page()
