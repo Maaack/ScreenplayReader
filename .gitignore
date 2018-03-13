@@ -7,7 +7,6 @@
 Dockerfile~
 
 screenplayreader/__pycache__/
-screenplayreader/settings.py
 
 .gitignore
 importer/__pycache__/

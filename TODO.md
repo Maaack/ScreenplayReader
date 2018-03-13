@@ -29,3 +29,7 @@ Get the tool working from end-to-end. Import a screenplay and get the underlying
 * Refactor InterpretOp into separate services
 * Create non-reversed link between TextBlocks and Lines
 * Determine dialogue from action by following characters
+
+### Docker
+* Have it build the migrations and run them on first run
+* Get postgreSQL hooked in properly
