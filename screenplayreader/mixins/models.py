@@ -36,6 +36,13 @@ class Ownable(models.Model):
     user = models.ForeignKey(user_model_name, models.SET_NULL, verbose_name=_("Author"), related_name="%(class)ss", blank=True, null=True)
 
 
+class OneWayOwnable(models.Model):
+    class Meta:
+        abstract = True
+
+    user = models.ForeignKey(user_model_name, models.SET_NULL, verbose_name=_("Author"), related_name="+", blank=True, null=True)
+
+
 class RawTitle(models.Model):
     class Meta:
         abstract = True
