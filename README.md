@@ -56,35 +56,65 @@ Outputs a csv of one scene per row, marking characters present.
 * docker-machine
 
 ### Setup
-Navigate into the base folder and run:
-`docker-compose up`
+1. Navigate into the base folder.
+1. Run `docker-compose up`
+1. :fire::fire::fire:
 
-You'll need to run migrations on the database to get it caught up.
-(If you'd like to have docker do this automagically - by all means)
-```
-$> sudo docker exec -it screenplayreader_web_1 /bin/bash
-timekeeper_web_1$> python manage.py makemigrations
-timekeeper_web_1$> python manage.py migrate
-```
+1. You'll need to run migrations on the database to get it caught up.
+   ```
+   $> sudo docker exec -it screenplayreader_web_1 /bin/bash
+   timekeeper_web_1$> python manage.py makemigrations
+   timekeeper_web_1$> python manage.py migrate
+   ```
+1. Open your browser to [localhost][1].
 
-Go to http://localhost:8000/
+### Usage
 
-From there you can visit http://0.0.0.0:8000/imported-content/, then
-http://0.0.0.0:8000/parse-operations/, then
-http://0.0.0.0:8000/interpret-operations/, finally
-http://0.0.0.0:8000/exporter/{screenplay_id_here}/characters
+#### Importing Content
+1. Visit the [Importer app API root][2].
+1. Send a POST request of your content to the [ImportedContent endpoint][2.1]. 
+
+#### Parsing Content
+1. Visit the [Importer app API root][2].
+1. Create a new [ParseOperation][2.2] and [run the operation][2.3]. 
+
+#### Interpreting Content
+1. Visit the [Interpreter app API root][3].
+1. Create a new [InterpretOperation][3.1] and [run the operation][3.2]. 
+
+#### Exporting Content
+1. Visit the [Exporter app API root][4].
+1. Navigate to a [Screenplay][4.1] created by the [Interpreter][3].
+1. Download [Basics CSV][4.2] or [Character Breakout CSV][4.3].
 
 ## Structure
 Django-based site with REST API framework
 
-`screenplayreader` is the Django project
-`importer` and `exporter` are the Django applications
+* `screenplayreader` - Django project
+  * `importer` - Django application
+  * `interpreter` - Django application
+  * `exporter` - Django application
 
 ## Additional Resources
-Writing your first Django App Tutorials: https://docs.djangoproject.com/en/1.10/intro/tutorial01/
+* [Writing your first Django App Tutorials][10]
+* [Django REST framework Documentation][11]
+* [REST API Quick Tips][12]
+* [API Cheatsheet][13]
 
-Django REST framework Documentation: http://www.django-rest-framework.org/
 
-API Cheatsheet: https://github.com/RestCheatSheet/api-cheat-sheet#api-design-cheat-sheet
-
-REST API Quick Tips: http://www.restapitutorial.com/lessons/restquicktips.html
+[1]: http://localhost:8000/
+[2]: http://localhost:8000/importer/
+[2.1]: http://localhost:8000/importer/imported-content/
+[2.2]: http://localhost:8000/importer/parse-operations/
+[2.3]: http://localhost:8000/importer/parse-operations/{:pk}/run-operation
+[3]: http://localhost:8000/interpreter/
+[3.1]: http://localhost:8000/interpreter/interpret-operations/
+[3.2]: http://localhost:8000/interpreter/interpret-operations/{:pk}/run-operation
+[4]: http://localhost:8000/exporter/
+[4.1]: http://localhost:8000/exporter/screenplays/
+[4.2]: http://localhost:8000/exporter/screenplays/{:pk}/basics-csv
+[4.3]: http://localhost:8000/exporter/screenplays/{:pk}/character-csv
+[10]: https://docs.djangoproject.com/en/2/intro/tutorial01/
+[11]: http://www.django-rest-framework.org/
+[12]: http://www.restapitutorial.com/lessons/restquicktips.html
+[13]: https://github.com/RestCheatSheet/api-cheat-sheet#api-design-cheat-sheet
