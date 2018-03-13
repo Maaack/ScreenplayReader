@@ -2,7 +2,6 @@
 Get the tool working from end-to-end. Import a screenplay and get the underlying structure.
 
 ## Next Sprint
-* Split Interpreter to separate app
 * Split Parser into separate app
 * Add general tags to use on text
 
@@ -29,5 +28,4 @@ Get the tool working from end-to-end. Import a screenplay and get the underlying
 ### Interpreter
 * Refactor InterpretOp into separate services
 * Create non-reversed link between TextBlocks and Lines
-* Split into a separate app
 * Determine dialogue from action by following characters
