@@ -17,6 +17,9 @@ class ParseOperation(GenericOperation):
 
     imported_content = models.ForeignKey('ImportedContent', models.CASCADE)
 
+    def __str__(self):
+        return str(self.imported_content)
+
     def operation(self):
         if self.imported_content:
             # self.parse_slugs()
@@ -87,6 +90,9 @@ class InterpretOperation(GenericOperation):
         default_related_name = 'interpret_operations'
 
     parse_operation = models.ForeignKey('ParseOperation', models.CASCADE)
+
+    def __str__(self):
+        return str(self.parse_operation)
 
     def operation(self):
         if self.parse_operation:
