@@ -3,8 +3,8 @@ from django.http import HttpResponse
 from django.db.models import Count
 from rest_framework.decorators import detail_route
 
-from importer.models import Screenplay
-from importer.views import ScreenplaySerializer, BaseViewSet
+from interpreter.models import Screenplay
+from interpreter.views import ScreenplaySerializer, BaseViewSet
 
 
 class ScreenplayViewSet(BaseViewSet):

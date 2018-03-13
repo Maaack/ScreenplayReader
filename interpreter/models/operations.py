@@ -1,7 +1,7 @@
 from django.utils.translation import ugettext_lazy as _
 from screenplayreader.mixins.models import *
 
-from importer.models import TextBlock
+from importer.models import TextBlock, ParseOperation
 from importer.services.parsers import SettingRegexParser, CharacterRegexParser
 from .models import Screenplay, Scene, TitlePage, Location, Character, Line
 
@@ -17,7 +17,7 @@ class InterpretOperation(GenericOperation):
         ordering = ["-created"]
         default_related_name = 'interpret_operations'
 
-    parse_operation = models.ForeignKey('ParseOperation', models.CASCADE)
+    parse_operation = models.ForeignKey(ParseOperation, models.CASCADE)
 
     def __str__(self):
         return str(self.parse_operation)

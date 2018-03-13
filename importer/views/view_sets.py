@@ -1,6 +1,3 @@
-from rest_framework.decorators import detail_route
-from rest_framework.response import Response
-
 from .serializers import *
 from screenplayreader.mixins.views import BaseViewSet, OperationViewSet
 
@@ -16,11 +13,6 @@ class ParseOperationViewSet(OperationViewSet):
     serializer_class = ParseOperationSerializer
 
 
-class InterpretOperationViewSet(OperationViewSet):
-    queryset = InterpretOperation.objects.all()
-    serializer_class = InterpretOperationSerializer
-
-
 class TextBlockViewSet(BaseViewSet):
     queryset = TextBlock.objects.all()
     serializer_class = TextBlockSerializer
@@ -34,33 +26,3 @@ class TextMatchViewSet(BaseViewSet):
 class GroupMatchViewSet(BaseViewSet):
     queryset = GroupMatch.objects.all()
     serializer_class = GroupMatchSerializer
-
-
-class ScreenplayViewSet(BaseViewSet):
-    queryset = Screenplay.objects.all()
-    serializer_class = ScreenplaySerializer
-
-
-class LineViewSet(BaseViewSet):
-    queryset = Line.objects.all()
-    serializer_class = LineSerializer
-
-
-class TitlePageViewSet(BaseViewSet):
-    queryset = TitlePage.objects.all()
-    serializer_class = TitlePageSerializer
-
-
-class SceneViewSet(BaseViewSet):
-    queryset = Scene.objects.all()
-    serializer_class = SceneSerializer
-
-
-class LocationViewSet(BaseViewSet):
-    queryset = Location.objects.all()
-    serializer_class = LocationSerializer
-
-
-class CharacterViewSet(BaseViewSet):
-    queryset = Character.objects.all()
-    serializer_class = CharacterSerializer
