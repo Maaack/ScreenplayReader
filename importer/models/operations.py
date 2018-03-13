@@ -17,12 +17,7 @@ class ParseOperation(GenericOperation):
 
     imported_content = models.ForeignKey('ImportedContent', models.CASCADE)
 
-    def save(self, *args, **kwargs):
-        result_object = super(ParseOperation, self).save(*args, **kwargs)
-        self.run_operation()
-        return result_object
-
-    def run_operation(self):
+    def operation(self):
         if self.imported_content:
             # self.parse_slugs()
             self.parse_settings()
@@ -93,11 +88,7 @@ class InterpretOperation(GenericOperation):
 
     parse_operation = models.ForeignKey('ParseOperation', models.CASCADE)
 
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-        self.run_operation()
-
-    def run_operation(self):
+    def operation(self):
         if self.parse_operation:
             self.interpret_lines()
             self.interpret_title_page()
