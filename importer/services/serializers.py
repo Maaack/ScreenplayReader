@@ -11,6 +11,14 @@ FIELDS_LIST_PARSE_OP_REL = FIELDS_LIST_COMMON_OBJECT + ('parse_operation', )
 FIELDS_LIST_INTERPRET_OP_REL = FIELDS_LIST_COMMON_OBJECT + ('interpret_operation', )
 
 
+class ReadOnlyUserMixinSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        abstract = True
+        fields = FIELDS_LIST_COMMON_OBJECT
+
+    user = serializers.ReadOnlyField(source='user.username')
+
+
 class ImportedContentSerializer(serializers.ModelSerializer):
     class Meta:
         model = ImportedContent
