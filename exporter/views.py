@@ -4,7 +4,8 @@ from django.db.models import Count
 from rest_framework.decorators import detail_route
 
 from interpreter.models import Screenplay
-from interpreter.views import ScreenplaySerializer, BaseViewSet
+from interpreter.views import ScreenplaySerializer
+from screenplayreader.mixins.view_sets import BaseViewSet
 
 
 class ScreenplayViewSet(BaseViewSet):

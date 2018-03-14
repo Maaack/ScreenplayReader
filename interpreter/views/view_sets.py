@@ -1,5 +1,5 @@
 from .serializers import *
-from screenplayreader.mixins.views import BaseViewSet, OperationViewSet
+from screenplayreader.mixins.view_sets import BaseViewSet, OperationViewSet
 
 
 # Create your views here.
