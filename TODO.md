@@ -4,6 +4,7 @@ Get the tool working from end-to-end. Import a screenplay and get the underlying
 ## Next Sprint
 * Split Parser into separate app
 * Add general tags to use on text
+* Deal with imports from sfy.ru being horribly formatted
 
 ## Backlog
 * Evaluate including django-taggit
