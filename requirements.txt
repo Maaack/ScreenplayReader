@@ -9,4 +9,4 @@ psycopg2==2.7.3.2
 Pygments==2.2.0
 pytz==2017.3
 requests==2.18.4
-urllib3==1.22
+urllib3==1.24.2
