@@ -6,7 +6,7 @@ httpie==1.0.3
 idna==2.6
 Pillow==8.1.1
 psycopg2==2.7.3.2
-Pygments==2.2.0
+Pygments==2.7.4
 pytz==2017.3
 requests==2.20.0
 urllib3==1.24.2
